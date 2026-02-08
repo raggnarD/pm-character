@@ -11,7 +11,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white"
+            className="min-h-screen text-[var(--color-text)]"
+            style={{ backgroundColor: 'var(--color-background)' }}
         >
             {/* Header */}
             <header className="p-6 text-center border-b-2 border-[var(--color-border)]">

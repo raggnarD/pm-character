@@ -46,7 +46,7 @@ STYLE REFERENCES:
 
 ---
 
-## Prompt 2: FF7 Original (PSX) Style Sprite
+## Prompt 2: FF7 Original (PSX) Style Spritelightdfdfdffd
 
 **For LLM Image Generation:**
 

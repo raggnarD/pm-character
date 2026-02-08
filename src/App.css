@@ -13,6 +13,8 @@ body {
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #000000;
+  color: #ffd700;
 }
 
 /* Font family classes for theme switching */
@@ -30,13 +32,13 @@ body {
 
 /* CSS Custom Properties (will be set dynamically by useTheme hook) */
 :root {
-  --color-background: #1a1a3e;
-  --color-border: #4a9eff;
-  --color-text: #ffffff;
+  --color-background: #2a2a2a;
+  --color-border: #ffd700;
+  --color-text: #ffd700;
   --color-accent: #ffd700;
-  --color-chartPrimary: #00ffff;
-  --color-chartSecondary: #00ff00;
-  --color-chartTertiary: #ffff99;
+  --color-chartPrimary: #ffd700;
+  --color-chartSecondary: #ffed4e;
+  --color-chartTertiary: #ffb700;
 }
 
 /* Scrollbar styling */

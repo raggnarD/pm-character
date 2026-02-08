@@ -12,15 +12,15 @@ const CharacterPicker: React.FC<CharacterPickerProps> = ({ activeStyle, onStyleC
     const spriteStyles: SpriteStyle[] = ['8bit', 'ff7', 'ff7-rebirth'];
 
     return (
-        <div className="w-full p-4 md:p-6">
+        <div className="h-full flex flex-col pr-4">
             {/* Tab buttons */}
-            <div className="flex gap-2 mb-6 justify-center md:justify-start">
+            <div className="flex gap-2 mb-4 justify-start flex-shrink-0 pl-4">
                 {spriteStyles.map((style) => (
                     <button
                         key={style}
                         onClick={() => onStyleChange(style)}
                         className={`
-              px-4 py-2 rounded-lg font-semibold text-sm md:text-base
+              px-4 py-2 rounded-lg font-semibold text-sm
               transition-all duration-300
               border-2
               ${activeStyle === style
@@ -34,8 +34,10 @@ const CharacterPicker: React.FC<CharacterPickerProps> = ({ activeStyle, onStyleC
                 ))}
             </div>
 
-            {/* Sprite display */}
-            <SpriteView activeStyle={activeStyle} />
+            {/* Sprite display - fills remaining height */}
+            <div className="flex-1 min-h-0">
+                <SpriteView activeStyle={activeStyle} />
+            </div>
         </div>
     );
 };
