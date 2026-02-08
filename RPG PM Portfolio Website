@@ -1,0 +1,326 @@
+RPG PM Portfolio Website
+
+Overview
+
+A single-page React + TypeScript application showcasing PM skills through an RPG character interface. The page features a side-by-side layout with a character picker on one side and skills charts on the other.
+
+Technology Stack
+
+
+
+
+
+React 18 with TypeScript for type safety
+
+
+
+Vite for fast development and building
+
+
+
+Recharts for spider charts (soft skills) and horizontal bar charts (hard skills)
+
+
+
+Framer Motion for smooth animations
+
+
+
+CSS Modules or Tailwind CSS for styling (dark theme)
+
+
+
+React Icons for UI elements
+
+Project Structure
+
+pm-character/
+├── src/
+│   ├── components/
+│   │   ├── CharacterPicker/
+│   │   │   ├── CharacterPicker.tsx
+│   │   │   ├── SpriteView.tsx
+│   │   │   └── CharacterPicker.module.css
+│   │   ├── SkillsCharts/
+│   │   │   ├── SkillsCharts.tsx
+│   │   │   ├── SoftSkillsSpider.tsx
+│   │   │   ├── HardSkillsBars.tsx
+│   │   │   └── SkillsCharts.module.css
+│   │   └── Layout/
+│   │       ├── MainLayout.tsx
+│   │       └── MainLayout.module.css
+│   ├── types/
+│   │   └── skills.ts
+│   ├── data/
+│   │   └── skillsData.ts (placeholder data structure)
+│   ├── App.tsx
+│   ├── App.css
+│   └── main.tsx
+├── public/
+│   └── sprites/ (placeholder structure - images to be added later)
+│       ├── 8bit/
+│       ├── ff7/
+│       └── ff7-rebirth/
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+
+Component Architecture
+
+CharacterPicker Component
+
+
+
+
+
+Sprite Toggle Tabs: Three tabs (8-bit, FF7, FF7 Rebirth) to switch sprite views
+
+
+
+Sprite Display: Large centered sprite image that updates based on selected tab
+
+
+
+State Management: Uses React useState to track active sprite style
+
+
+
+Animations: Fade/scale transitions when switching between sprite styles
+
+
+
+Placeholder: Shows placeholder image or message until actual sprites are provided
+
+SkillsCharts Component
+
+
+
+
+
+Soft Skills Spider Chart: 
+
+
+
+
+
+7 skills displayed on radar/spider chart
+
+
+
+Skills: Communication, Leadership, Problem-Solving, Adaptability, Negotiation, Conflict Resolution, Emotional Intelligence
+
+
+
+Scale: 0-100
+
+
+
+Hard Skills Bar Chart:
+
+
+
+
+
+5 skills displayed as horizontal bars
+
+
+
+Skills: Planning & Organization, Risk Management, Time Management, Stakeholder Management, Methodologies & Tools
+
+
+
+Scale: 0-100
+
+
+
+Data Structure: TypeScript interfaces for type safety
+
+
+
+Placeholder Data: Initial values set to 0 or placeholder numbers until real data provided
+
+Layout
+
+
+
+
+
+Side-by-Side Layout: 
+
+
+
+
+
+Left side: Character picker (40-50% width)
+
+
+
+Right side: Skills charts (50-60% width)
+
+
+
+Responsive: Stacks vertically on mobile
+
+
+
+Dark Theme: FF7-inspired dark color palette (dark blues, greens, mako-like colors)
+
+
+
+Animations: Page load animations, chart reveal animations
+
+Data Structure
+
+interface SoftSkill {
+  name: string;
+  value: number; // 0-100
+}
+
+interface HardSkill {
+  name: string;
+  value: number; // 0-100
+}
+
+interface SkillsData {
+  softSkills: SoftSkill[];
+  hardSkills: HardSkill[];
+}
+
+Implementation Details
+
+Styling Approach
+
+
+
+
+
+Dark theme with FF7 color palette
+
+
+
+RPG-style UI elements (borders, fonts)
+
+
+
+Smooth transitions and hover effects
+
+
+
+Responsive design for mobile/tablet/desktop
+
+Animation Strategy
+
+
+
+
+
+Character sprite: Fade/scale transition on tab change
+
+
+
+Charts: Staggered reveal animation on page load
+
+
+
+Bars: Animate from 0 to target value
+
+
+
+Spider chart: Draw animation on mount
+
+Image Handling
+
+
+
+
+
+Placeholder structure ready for sprite images
+
+
+
+Support for different image formats (PNG, WebP)
+
+
+
+Optimized loading with lazy loading if needed
+
+Development Phases
+
+
+
+
+
+Project Setup: Initialize React + TypeScript + Vite project with dependencies
+
+
+
+Layout & Styling: Create dark theme, side-by-side layout, responsive design
+
+
+
+Character Picker: Implement tab interface and sprite switching with animations
+
+
+
+Skills Charts: Build spider chart and bar chart components with Recharts
+
+
+
+Integration: Connect components, add animations, polish UI
+
+
+
+Placeholder Data: Set up data structure for easy skill value updates later
+
+Dependencies
+
+
+
+
+
+react, react-dom
+
+
+
+typescript
+
+
+
+vite
+
+
+
+@vitejs/plugin-react
+
+
+
+recharts
+
+
+
+framer-motion
+
+
+
+react-icons (optional, for UI elements)
+
+Notes
+
+
+
+
+
+Sprite images will be added later - placeholder structure prepared
+
+
+
+Skill values will be provided later - data structure ready for easy updates
+
+
+
+All components will be fully typed with TypeScript
+
+
+
+Code will be modular and maintainable for future enhancements
+

@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Font family classes for theme switching */
+.font-pixel {
+  font-family: 'Press Start 2P', cursive;
+}
+
+.font-ff7 {
+  font-family: 'Orbitron', sans-serif;
+}
+
+.font-rebirth {
+  font-family: 'Inter', sans-serif;
+}
+
+/* CSS Custom Properties (will be set dynamically by useTheme hook) */
+:root {
+  --color-background: #1a1a3e;
+  --color-border: #4a9eff;
+  --color-text: #ffffff;
+  --color-accent: #ffd700;
+  --color-chartPrimary: #00ffff;
+  --color-chartSecondary: #00ff00;
+  --color-chartTertiary: #ffff99;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
