@@ -3,7 +3,7 @@ import { SpriteStyle } from '../types/skills';
 // Theme configurations for each sprite style
 export const themes = {
     '8bit': {
-        name: '8-bit',
+        name: 'Vintage',
         fontFamily: 'font-pixel',
         colors: {
             background: '#1a1a3e',
@@ -16,7 +16,7 @@ export const themes = {
         }
     },
     'ff7': {
-        name: 'FF7',
+        name: 'Classic',
         fontFamily: 'font-ff7',
         colors: {
             background: '#1a2a5e',
@@ -31,7 +31,7 @@ export const themes = {
         }
     },
     'ff7-rebirth': {
-        name: 'FF7 Rebirth',
+        name: 'Modern',
         fontFamily: 'font-rebirth',
         colors: {
             background: '#1a2433',

@@ -9,9 +9,9 @@ interface SpriteViewProps {
 const SpriteView: React.FC<SpriteViewProps> = ({ activeStyle }) => {
     // Placeholder content until sprites are provided
     const placeholderText = {
-        '8bit': '8-bit Sprite',
-        'ff7': 'FF7 Sprite',
-        'ff7-rebirth': 'FF7 Rebirth Sprite'
+        '8bit': 'Vintage Sprite',
+        'ff7': 'Classic Sprite',
+        'ff7-rebirth': 'Modern Sprite'
     };
 
     return (
