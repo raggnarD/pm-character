@@ -28,7 +28,7 @@ function getCurrentAge(): number {
     }
     return age;
 }
-import { GiRank3, GiHouse, GiMagicSwirl, GiEyeTarget, GiQuillInk, GiConcentrationOrb, GiConversation } from 'react-icons/gi';
+import { GiRank3, GiHouse, GiMagicSwirl, GiEyeTarget, GiQuillInk, GiConcentrationOrb, GiConversation, GiHearts, GiWizardStaff } from 'react-icons/gi';
 
 const GLYPH_SIZE = 18;
 const GLYPH_CLASS = 'inline-block flex-shrink-0 text-[var(--color-accent)]';
@@ -157,7 +157,7 @@ function ExperienceBar() {
     const percent = Math.min(100, progress * 100);
 
     return (
-        <div className="mb-6 relative">
+        <div className="mb-6 relative" style={{ marginLeft: '3rem' }}>
             <div className="flex justify-between items-baseline text-xs font-panel-body text-[var(--color-text)] opacity-90 mb-1">
                 <span>Level {age}</span>
             </div>
@@ -198,7 +198,51 @@ function ExperienceBar() {
                 </AnimatePresence>
             </div>
             <div className="text-xs font-panel-body text-[var(--color-text)] opacity-75 mt-0.5">
-                {percent.toFixed(1)}%
+                Current Location: Trials of Fire
+            </div>
+        </div>
+    );
+}
+
+const MAX_HP = 9999;
+const MAX_MP = 680;
+const BASE_HP = 7890;
+const BASE_MP = 543;
+
+/** Fluctuate value by ~5–10% of base (up or down), clamped to [0, max]. */
+function fluctuate(current: number, base: number, max: number): number {
+    const pct = 0.05 + Math.random() * 0.05; // 5–10% of base
+    const delta = (Math.random() > 0.5 ? 1 : -1) * Math.round(base * pct);
+    return Math.max(0, Math.min(max, current + delta));
+}
+
+function HPMPStats() {
+    const [hp, setHp] = useState(BASE_HP);
+    const [mp, setMp] = useState(BASE_MP);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setHp((prev) => fluctuate(prev, BASE_HP, MAX_HP));
+            setMp((prev) => fluctuate(prev, BASE_MP, MAX_MP));
+        }, 2500 + Math.random() * 1500); // every ~2.5–4 s
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="mb-6 pl-8 ml-2 flex flex-col gap-2 font-panel-body text-sm text-[var(--color-text)]" style={{ paddingRight: '4rem' }}>
+            <div className="flex items-center">
+                <Glyph><GiHearts size={GLYPH_SIZE} /></Glyph>
+                <span className="font-semibold text-[var(--color-accent)] w-8">HP</span>
+                <span className="tabular-nums font-medium text-[var(--color-accent)]" style={{ paddingLeft: '1.5rem' }}>
+                    {hp.toLocaleString()}/{MAX_HP.toLocaleString()}
+                </span>
+            </div>
+            <div className="flex items-center">
+                <Glyph><GiWizardStaff size={GLYPH_SIZE} /></Glyph>
+                <span className="font-semibold text-[var(--color-accent)] w-8">MP</span>
+                <span className="tabular-nums font-medium text-[var(--color-accent)]" style={{ paddingLeft: '1.5rem' }}>
+                    {mp.toLocaleString()}/{MAX_MP.toLocaleString()}
+                </span>
             </div>
         </div>
     );
@@ -236,10 +280,13 @@ export default function CharacterDetails() {
                 {/* Experience bar (level 0–60 from birthday) */}
                 <ExperienceBar />
 
+                {/* HP / MP (fluctuating) */}
+                <HPMPStats />
+
                 {/* Identity: Class & House */}
                 <section>
                     <SectionTitle>Specialization</SectionTitle>
-                    <div className="flex flex-col gap-1.5" style={{ paddingLeft: '2rem', marginLeft: '0.5rem' }}>
+                    <div className="flex flex-col gap-1.5 pl-8 ml-2 pr-2">
                         {DETAILS.map(({ label, value, tooltip, glyph }) => (
                             <PanelItem key={label} label={label} value={value} tooltip={tooltip} glyph={glyph} />
                         ))}
@@ -249,7 +296,7 @@ export default function CharacterDetails() {
                 {/* Signature Move */}
                 <section>
                     <SectionTitle>Signature Move</SectionTitle>
-                    <div className="flex flex-col gap-1" style={{ paddingLeft: '2rem', marginLeft: '0.5rem' }}>
+                    <div className="flex flex-col gap-1 pl-8 ml-2 pr-2">
                         <p className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                             <Glyph>{SIGNATURE_MOVE.glyph}</Glyph>
                             <Tooltip content={SIGNATURE_MOVE.description}>
@@ -262,7 +309,7 @@ export default function CharacterDetails() {
                 {/* Passive Perks */}
                 <section>
                     <SectionTitle>Passive Perks</SectionTitle>
-                    <ul className="flex flex-col gap-3" style={{ paddingLeft: '2rem', marginLeft: '0.5rem', listStyle: 'none' }}>
+                    <ul className="flex flex-col gap-3 pl-8 ml-2 pr-2 list-none">
                         {PASSIVE_PERKS.map((perk) => (
                             <li key={perk.name} className="flex flex-col gap-0.5">
                                 <span className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
@@ -279,7 +326,7 @@ export default function CharacterDetails() {
                 {/* Bonus Trait */}
                 <section>
                     <SectionTitle>Bonus Trait</SectionTitle>
-                    <div className="flex flex-col gap-1" style={{ paddingLeft: '2rem', marginLeft: '0.5rem' }}>
+                    <div className="flex flex-col gap-1 pl-8 ml-2 pr-2">
                         <p className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                             <Glyph>{BONUS_TRAIT.glyph}</Glyph>
                             <Tooltip content={BONUS_TRAIT.description}>

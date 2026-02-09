@@ -2,19 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global styles */
+/* Global styles - consistent across Chrome and embedded browsers */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   background-color: #3a3a3a;
   color: #ffd700;
+  line-height: 1.5;
 }
 
 /* Font family classes for theme switching */
