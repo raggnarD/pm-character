@@ -1,7 +1,7 @@
 import MainLayout from './components/Layout/MainLayout';
 import LoopingGif from './components/LoopingGif';
 import HPMPStats from './components/HPMPStats';
-import CharacterDetails from './components/CharacterDetails/CharacterDetails';
+import CharacterDetails, { ExperienceBar } from './components/CharacterDetails/CharacterDetails';
 import CharacterStats from './components/CharacterDetails/CharacterStats';
 import { useTheme } from './hooks/useTheme';
 import { useIsMobile } from './hooks/useIsMobile';
@@ -45,36 +45,65 @@ function DesktopLayout() {
     );
 }
 
-/** Mobile-only layout: smaller sprite, stacked content, transparent. */
+/** Mobile layout spacing: change these to adjust spacing; all values in px. */
+const MOBILE_LAYOUT = {
+    pagePadding: 16,
+    gapBetweenSections: 24,
+    gapBetweenHpMpAndSprite: -48, // space between HP/MP block and sprite row (negative = overlap/reduce gap)
+    spriteTranslateX: -300,
+    spriteScale: 2,
+} as const;
+
+/** Mobile-only layout: HP/MP above, then sprite + level, then sections, then stats. */
 function MobileLayout() {
     return (
-        <>
-            <div className="fixed left-0 top-0 h-screen w-screen overflow-hidden z-0 pointer-events-none">
-                <LoopingGif
-                    src="sprites/ff7-rebirth/modern-sprite-loop.gif?v=2"
-                    alt="Character Sprite"
-                    className="max-h-[50vh] w-auto absolute left-4 top-0"
-                    style={{
-                        objectFit: 'contain',
-                        transform: 'translateX(-40%) translateY(40px) scale(0.65)',
-                        transformOrigin: 'left center'
-                    }}
-                />
-            </div>
-            <MainLayout>
-                <div className="relative z-10 p-4" style={{ backgroundColor: 'transparent' }}>
-                    <div className="flex flex-col w-full gap-4">
-                        <div aria-hidden>
-                            <HPMPStats />
-                        </div>
-                        <div className="flex-1 min-w-0 w-full max-w-xl flex flex-col">
-                            <CharacterDetails />
-                            <CharacterStats />
+        <MainLayout>
+            <div
+                className="relative z-10 flex flex-col overflow-visible"
+                style={{
+                    backgroundColor: 'transparent',
+                    padding: MOBILE_LAYOUT.pagePadding,
+                    gap: MOBILE_LAYOUT.gapBetweenSections,
+                }}
+            >
+                {/* Row 1: HP/MP above sprite */}
+                <div aria-hidden>
+                    <HPMPStats />
+                </div>
+                {/* Row 2: sprite upper left, level to the right */}
+                <div
+                    className="flex flex-row items-start gap-4 w-full overflow-visible"
+                    style={{ marginTop: -MOBILE_LAYOUT.gapBetweenSections + MOBILE_LAYOUT.gapBetweenHpMpAndSprite }}
+                >
+                    <div
+                        className="flex-shrink-0 overflow-hidden"
+                        style={{
+                            width: 800,
+                            height: 1280,
+                            maxWidth: '90vw',
+                            maxHeight: '60vh',
+                            transform: `translateX(${MOBILE_LAYOUT.spriteTranslateX}px)`,
+                        }}
+                        aria-hidden
+                    >
+                        <div style={{ transform: `scale(${MOBILE_LAYOUT.spriteScale})`, transformOrigin: 'top left', width: 400, height: 640 }}>
+                            <LoopingGif
+                                src="sprites/ff7-rebirth/modern-sprite-loop.gif?v=2"
+                                alt="Character Sprite"
+                                className="block h-full w-full object-contain object-left-top"
+                            />
                         </div>
                     </div>
+                    <div className="flex-1 min-w-0">
+                        <ExperienceBar />
+                    </div>
                 </div>
-            </MainLayout>
-        </>
+                {/* Sections: Specialization, Passive Perks, Signature Moves, Bonus Trait */}
+                <CharacterDetails variant="mobile" />
+                {/* Stats */}
+                <CharacterStats />
+            </div>
+        </MainLayout>
     );
 }
 

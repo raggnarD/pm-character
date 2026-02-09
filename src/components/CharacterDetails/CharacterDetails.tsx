@@ -90,7 +90,7 @@ function getRandomGain(): number {
     return Math.floor(r * 5043) + 1;
 }
 
-function ExperienceBar() {
+export function ExperienceBar() {
     const [progress, setProgress] = useState(getYearProgress);
     const [gain, setGain] = useState<{ value: number; key: number } | null>(null);
 
@@ -183,7 +183,74 @@ function PanelItem({ label, value, tooltip, glyph }: { label: string; value: str
     );
 }
 
-export default function CharacterDetails() {
+interface CharacterDetailsProps {
+    /** When true, hide the experience bar and render sections in mobile order (stacked). */
+    variant?: 'desktop' | 'mobile';
+}
+
+export default function CharacterDetails({ variant = 'desktop' }: CharacterDetailsProps) {
+    const isMobile = variant === 'mobile';
+
+    const sectionsContent = (
+        <>
+            {/* Specialization */}
+            <section className="min-w-0">
+                <SectionTitle>Specialization</SectionTitle>
+                <div className={`flex flex-col pl-6 md:pl-8 ml-2 pr-2`} style={{ gap: '1px' }}>
+                    {DETAILS.map(({ label, value, tooltip, glyph }) => (
+                        <PanelItem key={label} label={label} value={value} tooltip={tooltip} glyph={glyph} />
+                    ))}
+                </div>
+            </section>
+            {/* Passive Perks */}
+            <section className="min-w-0">
+                <SectionTitle>Passive Perks</SectionTitle>
+                <ul className={`flex flex-col pl-6 md:pl-8 ml-2 pr-2 list-none`} style={{ gap: '1px' }}>
+                    {PASSIVE_PERKS.map((perk) => (
+                        <li key={perk.name} className="flex flex-col gap-0.5">
+                            <span className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
+                                <Glyph>{perk.glyph}</Glyph>
+                                <Tooltip content={perk.description}>{perk.name}</Tooltip>
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+            {/* Signature Move */}
+            <section className="min-w-0">
+                <SectionTitle>Signature Move</SectionTitle>
+                <div className={`flex flex-col pl-6 md:pl-8 ml-2 pr-2`} style={{ gap: '1px' }}>
+                    {SIGNATURE_MOVES.map((move) => (
+                        <p key={move.name} className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
+                            <Glyph>{move.glyph}</Glyph>
+                            <Tooltip content={move.description}>
+                                {move.name}{move.suffix ? ` ${move.suffix}` : ''}
+                            </Tooltip>
+                        </p>
+                    ))}
+                </div>
+            </section>
+            {/* Bonus Trait */}
+            <section className="min-w-0">
+                <SectionTitle>Bonus Trait</SectionTitle>
+                <div className={`flex flex-col pl-6 md:pl-8 ml-2 pr-2`} style={{ gap: '1px' }}>
+                    <p className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
+                        <Glyph>{BONUS_TRAIT.glyph}</Glyph>
+                        <Tooltip content={BONUS_TRAIT.description}>{BONUS_TRAIT.name}</Tooltip>
+                    </p>
+                </div>
+            </section>
+        </>
+    );
+
+    if (isMobile) {
+        return (
+            <div className="character-details font-panel-body flex flex-col gap-6">
+                {sectionsContent}
+            </div>
+        );
+    }
+
     return (
         <motion.div
             initial={{ opacity: 0, x: 16 }}
@@ -192,10 +259,7 @@ export default function CharacterDetails() {
             className="character-details font-panel-body"
         >
             <div className="p-5 lg:p-6 flex flex-col" style={{ gap: '0.625rem' }}>
-                {/* Experience bar (level 0–60 from birthday) */}
                 <ExperienceBar />
-
-                {/* Specialization | Signature Move — two columns */}
                 <div className="flex flex-row flex-wrap gap-8 items-start" style={{ marginTop: '0.5rem' }}>
                     <section className="min-w-0 flex-1">
                         <SectionTitle>Specialization</SectionTitle>
@@ -219,8 +283,6 @@ export default function CharacterDetails() {
                         </div>
                     </section>
                 </div>
-
-                {/* Passive Perks | Bonus Trait — two columns */}
                 <div className="flex flex-row flex-wrap gap-8 items-start" style={{ marginTop: '0.875rem' }}>
                     <section className="min-w-0 flex-1">
                         <SectionTitle>Passive Perks</SectionTitle>
@@ -229,9 +291,7 @@ export default function CharacterDetails() {
                                 <li key={perk.name} className="flex flex-col gap-0.5">
                                     <span className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                                         <Glyph>{perk.glyph}</Glyph>
-                                        <Tooltip content={perk.description}>
-                                            {perk.name}
-                                        </Tooltip>
+                                        <Tooltip content={perk.description}>{perk.name}</Tooltip>
                                     </span>
                                 </li>
                             ))}
@@ -242,9 +302,7 @@ export default function CharacterDetails() {
                         <div className="flex flex-col pl-8 ml-2 pr-2" style={{ gap: '1px' }}>
                             <p className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                                 <Glyph>{BONUS_TRAIT.glyph}</Glyph>
-                                <Tooltip content={BONUS_TRAIT.description}>
-                                    {BONUS_TRAIT.name}
-                                </Tooltip>
+                                <Tooltip content={BONUS_TRAIT.description}>{BONUS_TRAIT.name}</Tooltip>
                             </p>
                         </div>
                     </section>
