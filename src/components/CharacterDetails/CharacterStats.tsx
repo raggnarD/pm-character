@@ -27,7 +27,7 @@ export default function CharacterStats() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.25 }}
-            className="font-panel-body bg-[var(--color-background)]"
+            className="font-panel-body"
             style={{ marginTop: '2rem' }}
         >
             <div className="p-5 lg:p-6 flex flex-col gap-4">

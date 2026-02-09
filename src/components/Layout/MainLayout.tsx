@@ -12,7 +12,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
             className="min-h-screen flex flex-col text-[var(--color-text)]"
-            style={{ backgroundColor: 'var(--color-background)' }}
+            style={{ backgroundColor: 'transparent' }}
         >
             {/* Header */}
             <header className="p-6 text-center shrink-0">

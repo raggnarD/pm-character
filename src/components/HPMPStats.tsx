@@ -28,7 +28,7 @@ export default function HPMPStats() {
 
     return (
         <div
-            className="mb-4 flex flex-col gap-2 font-panel-body text-sm text-[var(--color-text)] bg-[var(--color-background)] p-4 rounded"
+            className="mb-4 flex flex-col gap-2 font-panel-body text-sm text-[var(--color-text)] p-4 rounded"
             style={{ paddingRight: '4rem', paddingLeft: '3rem' }}
         >
             <div className="flex items-center">

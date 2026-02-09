@@ -189,7 +189,7 @@ export default function CharacterDetails() {
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.35, delay: 0.15 }}
-            className="character-details font-panel-body bg-[var(--color-background)]"
+            className="character-details font-panel-body"
         >
             <div className="p-5 lg:p-6 flex flex-col" style={{ gap: '0.625rem' }}>
                 {/* Experience bar (level 0–60 from birthday) */}
