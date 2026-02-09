@@ -113,9 +113,10 @@ function ExperienceBar() {
     const percent = Math.min(100, progress * 100);
 
     return (
-        <div className="mb-6 relative" style={{ marginLeft: '3rem' }}>
-            <div className="flex justify-between items-baseline text-xs font-panel-body text-[var(--color-text)] opacity-90 mb-1">
+        <div className="mb-6 relative">
+            <div className="flex justify-between items-baseline text-xs font-panel-body text-[var(--color-text)] opacity-90 mb-1 gap-2">
                 <span>Level {age}</span>
+                <span className="tabular-nums text-[var(--color-accent)]">{percent.toFixed(1)}% to next level</span>
             </div>
             <div className="w-full max-w-[260px] relative">
                 <div
