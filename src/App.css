@@ -13,7 +13,7 @@ body {
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #000000;
+  background-color: #3a3a3a;
   color: #ffd700;
 }
 
@@ -30,9 +30,18 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+/* RPG character panel - parchment / stat block */
+.font-panel-title {
+  font-family: 'Cinzel', Georgia, serif;
+}
+
+.font-panel-body {
+  font-family: 'Crimson Pro', Georgia, serif;
+}
+
 /* CSS Custom Properties (will be set dynamically by useTheme hook) */
 :root {
-  --color-background: #2a2a2a;
+  --color-background: #454545;
   --color-border: #ffd700;
   --color-text: #ffd700;
   --color-accent: #ffd700;
@@ -47,7 +56,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #404040;
 }
 
 ::-webkit-scrollbar-thumb {

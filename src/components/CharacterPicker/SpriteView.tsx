@@ -1,6 +1,7 @@
 import React from 'react';
 import { SpriteStyle } from '../../types/skills';
 import { motion } from 'framer-motion';
+import LoopingGif from '../LoopingGif';
 
 interface SpriteViewProps {
     activeStyle: SpriteStyle;
@@ -27,8 +28,8 @@ const SpriteView: React.FC<SpriteViewProps> = ({ activeStyle }) => {
             className="flex items-start justify-start w-full h-full"
         >
             {showModernSprite ? (
-                <img
-                    src="sprites/ff7-rebirth/modern-sprite.gif"
+                <LoopingGif
+                    src="sprites/ff7-rebirth/modern-sprite-loop.gif?v=2"
                     alt="Modern Character Sprite"
                     className="h-full w-auto object-contain object-left"
                 />

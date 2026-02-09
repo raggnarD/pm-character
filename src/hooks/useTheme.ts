@@ -3,7 +3,7 @@ import { SpriteStyle } from '../types/skills';
 import { themes } from '../styles/themes';
 
 export const useTheme = () => {
-    const [activeTheme, setActiveTheme] = useState<SpriteStyle>('8bit');
+    const [activeTheme, setActiveTheme] = useState<SpriteStyle>('ff7-rebirth');
 
     useEffect(() => {
         // Apply CSS variables to root element based on active theme

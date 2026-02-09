@@ -6,7 +6,7 @@ export const themes = {
         name: 'Vintage',
         fontFamily: 'font-pixel',
         colors: {
-            background: '#2a2a2a',
+            background: '#454545',
             border: '#ffd700',
             text: '#ffd700',
             accent: '#ffd700',
@@ -19,8 +19,8 @@ export const themes = {
         name: 'Classic',
         fontFamily: 'font-ff7',
         colors: {
-            background: '#2a2a2a',
-            backgroundLight: '#1a1a1a',
+            background: '#454545',
+            backgroundLight: '#505050',
             border: '#ffd700',
             text: '#ffd700',
             textAlt: '#ffed4e',
@@ -34,8 +34,8 @@ export const themes = {
         name: 'Modern',
         fontFamily: 'font-rebirth',
         colors: {
-            background: '#2a2a2a',
-            backgroundOverlay: 'rgba(0, 0, 0, 0.85)',
+            background: '#454545',
+            backgroundOverlay: 'rgba(58, 58, 58, 0.9)',
             border: '#ffd700',
             text: '#ffd700',
             textHighlight: '#ffed4e',

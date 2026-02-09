@@ -11,11 +11,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="min-h-screen text-[var(--color-text)]"
+            className="min-h-screen flex flex-col text-[var(--color-text)]"
             style={{ backgroundColor: 'var(--color-background)' }}
         >
             {/* Header */}
-            <header className="p-6 text-center border-b-2 border-[var(--color-border)]">
+            <header className="p-6 text-center shrink-0">
                 <motion.h1
                     initial={{ y: -20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -30,19 +30,19 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                     transition={{ duration: 0.6, delay: 0.4 }}
                     className="text-sm md:text-base text-[var(--color-text)] opacity-70 mt-2"
                 >
-                    Project Management Skills • RPG Style
+                    Product Management Skills • RPG Style
                 </motion.p>
             </header>
 
             {/* Main content */}
-            <main className="container mx-auto max-w-7xl">
+            <main className="container mx-auto max-w-7xl flex-1">
                 {children}
             </main>
 
-            {/* Footer */}
-            <footer className="p-6 text-center border-t-2 border-[var(--color-border)] mt-12">
+            {/* Footer - pushed to bottom of page */}
+            <footer className="mt-auto p-6 text-center border-t-2 border-[var(--color-border)]">
                 <p className="text-[var(--color-text)] opacity-60 text-sm">
-                    Built with React + TypeScript + Tailwind CSS
+                    Built with React + TypeScript
                 </p>
             </footer>
         </motion.div>
