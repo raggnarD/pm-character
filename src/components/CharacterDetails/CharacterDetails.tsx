@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Tooltip from '../Tooltip';
 
 const BIRTH_MONTH = 5;   // June (0-indexed)
 const BIRTH_DAY = 27;
@@ -28,7 +29,7 @@ function getCurrentAge(): number {
     }
     return age;
 }
-import { GiRank3, GiHouse, GiMagicSwirl, GiEyeTarget, GiQuillInk, GiConcentrationOrb, GiConversation, GiHearts, GiWizardStaff } from 'react-icons/gi';
+import { GiRank3, GiHouse, GiMagicSwirl, GiEyeTarget, GiQuillInk, GiConcentrationOrb, GiConversation, GiFootsteps } from 'react-icons/gi';
 
 const GLYPH_SIZE = 18;
 const GLYPH_CLASS = 'inline-block flex-shrink-0 text-[var(--color-accent)]';
@@ -45,61 +46,6 @@ function Glyph({ children }: { children: React.ReactNode }) {
     );
 }
 
-interface TooltipProps {
-    content: string;
-    children: React.ReactNode;
-    className?: string;
-}
-
-const CURSOR_OFFSET = 12;
-const VIEWPORT_PADDING = 20;
-
-function Tooltip({ content, children, className = '' }: TooltipProps) {
-    const [visible, setVisible] = useState(false);
-    const [mouse, setMouse] = useState({ x: 0, y: 0 });
-
-    const handleMouseEnter = (e: React.MouseEvent) => {
-        setMouse({ x: e.clientX, y: e.clientY });
-        setVisible(true);
-    };
-
-    const handleMouseMove = (e: React.MouseEvent) => {
-        if (visible) setMouse({ x: e.clientX, y: e.clientY });
-    };
-
-    const left = Math.max(VIEWPORT_PADDING, Math.min(mouse.x + CURSOR_OFFSET, window.innerWidth - 320));
-    const top = Math.max(VIEWPORT_PADDING, Math.min(mouse.y + CURSOR_OFFSET, window.innerHeight - 280));
-
-    return (
-        <span
-            className={`relative inline-flex items-center gap-1 cursor-help border-b border-dotted border-[var(--color-accent)] ${className}`}
-            onMouseEnter={handleMouseEnter}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={() => setVisible(false)}
-        >
-            {children}
-            <AnimatePresence>
-                {visible && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.96 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.96 }}
-                        transition={{ duration: 0.15 }}
-                        className="fixed z-50 min-w-[20rem] max-w-[calc(100vw-40px)] px-4 py-3 text-sm rounded-lg border-2 border-[var(--color-border)] text-[var(--color-text)] shadow-xl overflow-y-auto max-h-64 pointer-events-none"
-                        style={{
-                            backgroundColor: '#000',
-                            left,
-                            top,
-                        }}
-                    >
-                        {content}
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </span>
-    );
-}
-
 const CLASS_TOOLTIP = 'The Fog-Piercer — Resolve, Perception, Insight';
 const HOUSE_TOOLTIP = `"I pledge my technical insight to the service of the Sovereign User, for the system exists only to empower the human. I pledge to be the shield that guards against the 'Magic' of false promises and the sword that cuts through the fog."`;
 
@@ -108,12 +54,22 @@ const DETAILS = [
     { label: 'House', value: 'Customer', tooltip: HOUSE_TOOLTIP, glyph: <GiHouse size={GLYPH_SIZE} /> },
 ] as const;
 
-const SIGNATURE_MOVE = {
-    name: 'Dispel Ambiguity',
-    description:
-        'An AOE (Area of Effect) spell that instantly converts "I think we need..." into a Jira ticket with clear Acceptance Criteria.',
-    glyph: <GiMagicSwirl size={GLYPH_SIZE} />,
-};
+const SIGNATURE_MOVES = [
+    {
+        name: 'Dispel Ambiguity',
+        description:
+            'An AOE (Area of Effect) spell that instantly converts "I think we need..." into a Jira ticket with clear Acceptance Criteria.',
+        glyph: <GiMagicSwirl size={GLYPH_SIZE} />,
+        suffix: '(AOE)',
+    },
+    {
+        name: 'Pivot of Grace (Tactical Mobility)',
+        description:
+            'Allows the entire team to change direction based on new data without losing more than 5% of their momentum or morale.',
+        glyph: <GiFootsteps size={GLYPH_SIZE} />,
+        suffix: null,
+    },
+];
 
 const PASSIVE_PERKS = [
     { name: 'True Sight', description: 'You see the hidden technical constraints that stakeholders usually miss.', glyph: <GiEyeTarget size={GLYPH_SIZE} /> },
@@ -204,50 +160,6 @@ function ExperienceBar() {
     );
 }
 
-const MAX_HP = 9999;
-const MAX_MP = 680;
-const BASE_HP = 7890;
-const BASE_MP = 543;
-
-/** Fluctuate value by ~5–10% of base (up or down), clamped to [0, max]. */
-function fluctuate(current: number, base: number, max: number): number {
-    const pct = 0.05 + Math.random() * 0.05; // 5–10% of base
-    const delta = (Math.random() > 0.5 ? 1 : -1) * Math.round(base * pct);
-    return Math.max(0, Math.min(max, current + delta));
-}
-
-function HPMPStats() {
-    const [hp, setHp] = useState(BASE_HP);
-    const [mp, setMp] = useState(BASE_MP);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setHp((prev) => fluctuate(prev, BASE_HP, MAX_HP));
-            setMp((prev) => fluctuate(prev, BASE_MP, MAX_MP));
-        }, 2500 + Math.random() * 1500); // every ~2.5–4 s
-        return () => clearInterval(interval);
-    }, []);
-
-    return (
-        <div className="mb-6 pl-8 ml-2 flex flex-col gap-2 font-panel-body text-sm text-[var(--color-text)]" style={{ paddingRight: '4rem' }}>
-            <div className="flex items-center">
-                <Glyph><GiHearts size={GLYPH_SIZE} /></Glyph>
-                <span className="font-semibold text-[var(--color-accent)] w-8">HP</span>
-                <span className="tabular-nums font-medium text-[var(--color-accent)]" style={{ paddingLeft: '1.5rem' }}>
-                    {hp.toLocaleString()}/{MAX_HP.toLocaleString()}
-                </span>
-            </div>
-            <div className="flex items-center">
-                <Glyph><GiWizardStaff size={GLYPH_SIZE} /></Glyph>
-                <span className="font-semibold text-[var(--color-accent)] w-8">MP</span>
-                <span className="tabular-nums font-medium text-[var(--color-accent)]" style={{ paddingLeft: '1.5rem' }}>
-                    {mp.toLocaleString()}/{MAX_MP.toLocaleString()}
-                </span>
-            </div>
-        </div>
-    );
-}
-
 function SectionTitle({ children }: { children: React.ReactNode }) {
     return (
         <h3 className="font-panel-title text-base lg:text-lg font-semibold text-[var(--color-accent)] pt-2 pb-1 mb-4 tracking-wide">
@@ -280,61 +192,60 @@ export default function CharacterDetails() {
                 {/* Experience bar (level 0–60 from birthday) */}
                 <ExperienceBar />
 
-                {/* HP / MP (fluctuating) */}
-                <HPMPStats />
-
-                {/* Identity: Class & House */}
-                <section>
-                    <SectionTitle>Specialization</SectionTitle>
-                    <div className="flex flex-col gap-1.5 pl-8 ml-2 pr-2">
-                        {DETAILS.map(({ label, value, tooltip, glyph }) => (
-                            <PanelItem key={label} label={label} value={value} tooltip={tooltip} glyph={glyph} />
-                        ))}
-                    </div>
-                </section>
-
-                {/* Signature Move */}
-                <section>
-                    <SectionTitle>Signature Move</SectionTitle>
-                    <div className="flex flex-col gap-1 pl-8 ml-2 pr-2">
-                        <p className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
-                            <Glyph>{SIGNATURE_MOVE.glyph}</Glyph>
-                            <Tooltip content={SIGNATURE_MOVE.description}>
-                                {SIGNATURE_MOVE.name}
-                            </Tooltip>
-                        </p>
-                    </div>
-                </section>
-
-                {/* Passive Perks */}
-                <section>
-                    <SectionTitle>Passive Perks</SectionTitle>
-                    <ul className="flex flex-col gap-3 pl-8 ml-2 pr-2 list-none">
-                        {PASSIVE_PERKS.map((perk) => (
-                            <li key={perk.name} className="flex flex-col gap-0.5">
-                                <span className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
-                                    <Glyph>{perk.glyph}</Glyph>
-                                    <Tooltip content={perk.description}>
-                                        {perk.name}
+                {/* Specialization | Signature Move — two columns */}
+                <div className="flex flex-row flex-wrap gap-8 items-start" style={{ marginTop: '2rem' }}>
+                    <section className="min-w-0 flex-1">
+                        <SectionTitle>Specialization</SectionTitle>
+                        <div className="flex flex-col gap-1.5 pl-8 ml-2 pr-2">
+                            {DETAILS.map(({ label, value, tooltip, glyph }) => (
+                                <PanelItem key={label} label={label} value={value} tooltip={tooltip} glyph={glyph} />
+                            ))}
+                        </div>
+                    </section>
+                    <section className="min-w-0 flex-1">
+                        <SectionTitle>Signature Move</SectionTitle>
+                        <div className="flex flex-col gap-3 pl-8 ml-2 pr-2">
+                            {SIGNATURE_MOVES.map((move) => (
+                                <p key={move.name} className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
+                                    <Glyph>{move.glyph}</Glyph>
+                                    <Tooltip content={move.description}>
+                                        {move.name}{move.suffix ? ` ${move.suffix}` : ''}
                                     </Tooltip>
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                </section>
+                                </p>
+                            ))}
+                        </div>
+                    </section>
+                </div>
 
-                {/* Bonus Trait */}
-                <section>
-                    <SectionTitle>Bonus Trait</SectionTitle>
-                    <div className="flex flex-col gap-1 pl-8 ml-2 pr-2">
-                        <p className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
-                            <Glyph>{BONUS_TRAIT.glyph}</Glyph>
-                            <Tooltip content={BONUS_TRAIT.description}>
-                                {BONUS_TRAIT.name}
-                            </Tooltip>
-                        </p>
-                    </div>
-                </section>
+                {/* Passive Perks | Bonus Trait — two columns */}
+                <div className="flex flex-row flex-wrap gap-8 items-start">
+                    <section className="min-w-0 flex-1">
+                        <SectionTitle>Passive Perks</SectionTitle>
+                        <ul className="flex flex-col gap-3 pl-8 ml-2 pr-2 list-none">
+                            {PASSIVE_PERKS.map((perk) => (
+                                <li key={perk.name} className="flex flex-col gap-0.5">
+                                    <span className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
+                                        <Glyph>{perk.glyph}</Glyph>
+                                        <Tooltip content={perk.description}>
+                                            {perk.name}
+                                        </Tooltip>
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                    <section className="min-w-0 flex-1">
+                        <SectionTitle>Bonus Trait</SectionTitle>
+                        <div className="flex flex-col gap-1 pl-8 ml-2 pr-2">
+                            <p className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
+                                <Glyph>{BONUS_TRAIT.glyph}</Glyph>
+                                <Tooltip content={BONUS_TRAIT.description}>
+                                    {BONUS_TRAIT.name}
+                                </Tooltip>
+                            </p>
+                        </div>
+                    </section>
+                </div>
             </div>
         </motion.div>
     );

@@ -1,5 +1,6 @@
 import MainLayout from './components/Layout/MainLayout';
 import LoopingGif from './components/LoopingGif';
+import HPMPStats from './components/HPMPStats';
 import CharacterDetails from './components/CharacterDetails/CharacterDetails';
 import CharacterStats from './components/CharacterDetails/CharacterStats';
 import { useTheme } from './hooks/useTheme';
@@ -19,7 +20,7 @@ function App() {
                     className="h-full w-auto absolute left-[60px] top-0"
                     style={{
                         objectFit: 'contain',
-                        transform: 'translateX(-45%) translateY(40px) scale(1.08)',
+                        transform: 'translateX(-45%) translateY(60px) scale(1.08)',
                         transformOrigin: 'left center'
                     }}
                 />
@@ -27,13 +28,15 @@ function App() {
 
             <MainLayout>
                 <div className="relative z-10 p-8">
-                    {/* Sprite | divider | character details */}
-                    <div className="mt-6 md:mt-8 flex flex-row items-stretch w-full">
+                    {/* HP/MP (left) | Level 39, Specialization, Stats (right) — aligned at top */}
+                    <div className="flex flex-row items-start w-full">
                         <div
                             className="flex-shrink-0"
                             style={{ width: 'min(50vw, 50%)', minWidth: 'min(50vw, 50%)' }}
                             aria-hidden
-                        />
+                        >
+                            <HPMPStats />
+                        </div>
                         <div className="flex-1 min-w-0 pl-6 lg:pl-8 max-w-xl flex flex-col">
                             <CharacterDetails />
                             <CharacterStats />
