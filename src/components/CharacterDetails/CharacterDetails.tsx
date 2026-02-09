@@ -116,7 +116,7 @@ function ExperienceBar() {
         <div className="mb-6 relative">
             <div className="flex justify-between items-baseline text-xs font-panel-body text-[var(--color-text)] opacity-90 mb-1 gap-2">
                 <span>Level {age}</span>
-                <span className="tabular-nums text-[var(--color-accent)]">{percent.toFixed(1)}% to next level</span>
+                <span className="tabular-nums text-[var(--color-accent)] shrink-0" style={{ paddingRight: '1.5rem' }}>{percent.toFixed(1)}% to next level</span>
             </div>
             <div className="w-full max-w-[260px] relative">
                 <div
