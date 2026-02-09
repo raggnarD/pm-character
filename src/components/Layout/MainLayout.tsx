@@ -22,7 +22,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="text-3xl md:text-5xl font-bold text-[var(--color-text)]"
                 >
-                    James Kocher : Tech Paladin
+                    Stakeholder Gambit: The Last Standup
                 </motion.h1>
             </header>
 

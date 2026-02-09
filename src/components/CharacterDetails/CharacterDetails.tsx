@@ -149,7 +149,7 @@ function ExperienceBar() {
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.4 }}
                         >
-                            +{gain.value}
+                            +{gain.value} exp
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -173,10 +173,12 @@ function PanelItem({ label, value, tooltip, glyph }: { label: string; value: str
     return (
         <div className="font-panel-body text-sm text-[var(--color-text)] flex items-center">
             <Glyph>{glyph}</Glyph>
-            <span className="opacity-80">{label}: </span>
-            <Tooltip content={tooltip}>
-                <span className="font-semibold text-[var(--color-accent)]">{value}</span>
-            </Tooltip>
+            <span className="opacity-80">{label}:</span>
+            <span style={{ marginLeft: '0.5rem' }}>
+                <Tooltip content={tooltip}>
+                    <span className="font-semibold text-[var(--color-accent)]">{value}</span>
+                </Tooltip>
+            </span>
         </div>
     );
 }
@@ -189,15 +191,15 @@ export default function CharacterDetails() {
             transition={{ duration: 0.35, delay: 0.15 }}
             className="character-details font-panel-body bg-[var(--color-background)]"
         >
-            <div className="p-5 lg:p-6 flex flex-col gap-10">
+            <div className="p-5 lg:p-6 flex flex-col" style={{ gap: '0.625rem' }}>
                 {/* Experience bar (level 0–60 from birthday) */}
                 <ExperienceBar />
 
                 {/* Specialization | Signature Move — two columns */}
-                <div className="flex flex-row flex-wrap gap-8 items-start" style={{ marginTop: '2rem' }}>
+                <div className="flex flex-row flex-wrap gap-8 items-start" style={{ marginTop: '0.5rem' }}>
                     <section className="min-w-0 flex-1">
                         <SectionTitle>Specialization</SectionTitle>
-                        <div className="flex flex-col gap-1.5 pl-8 ml-2 pr-2">
+                        <div className="flex flex-col pl-8 ml-2 pr-2" style={{ gap: '1px' }}>
                             {DETAILS.map(({ label, value, tooltip, glyph }) => (
                                 <PanelItem key={label} label={label} value={value} tooltip={tooltip} glyph={glyph} />
                             ))}
@@ -205,7 +207,7 @@ export default function CharacterDetails() {
                     </section>
                     <section className="min-w-0 flex-1">
                         <SectionTitle>Signature Move</SectionTitle>
-                        <div className="flex flex-col gap-3 pl-8 ml-2 pr-2">
+                        <div className="flex flex-col pl-8 ml-2 pr-2" style={{ gap: '1px' }}>
                             {SIGNATURE_MOVES.map((move) => (
                                 <p key={move.name} className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                                     <Glyph>{move.glyph}</Glyph>
@@ -219,10 +221,10 @@ export default function CharacterDetails() {
                 </div>
 
                 {/* Passive Perks | Bonus Trait — two columns */}
-                <div className="flex flex-row flex-wrap gap-8 items-start">
+                <div className="flex flex-row flex-wrap gap-8 items-start" style={{ marginTop: '0.875rem' }}>
                     <section className="min-w-0 flex-1">
                         <SectionTitle>Passive Perks</SectionTitle>
-                        <ul className="flex flex-col gap-3 pl-8 ml-2 pr-2 list-none">
+                        <ul className="flex flex-col pl-8 ml-2 pr-2 list-none" style={{ gap: '1px' }}>
                             {PASSIVE_PERKS.map((perk) => (
                                 <li key={perk.name} className="flex flex-col gap-0.5">
                                     <span className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
@@ -237,7 +239,7 @@ export default function CharacterDetails() {
                     </section>
                     <section className="min-w-0 flex-1">
                         <SectionTitle>Bonus Trait</SectionTitle>
-                        <div className="flex flex-col gap-1 pl-8 ml-2 pr-2">
+                        <div className="flex flex-col pl-8 ml-2 pr-2" style={{ gap: '1px' }}>
                             <p className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                                 <Glyph>{BONUS_TRAIT.glyph}</Glyph>
                                 <Tooltip content={BONUS_TRAIT.description}>
