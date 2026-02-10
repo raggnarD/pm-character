@@ -17,6 +17,7 @@ type CanonicalLayout = {
     spriteLeftPx: number;
     spriteTopPx: number;
     hpmpPaddingTopPx: number;
+    spriteScale: number;
     levelBarX: number;
     levelBarY: number;
     hpmpBlockX: number;
@@ -29,6 +30,7 @@ type LayoutOffsets = {
     spriteX: number;
     spriteY: number;
     hpmpPadding: number;
+    spriteScaleOffset: number;
     levelBarX: number;
     levelBarY: number;
     hpmpBlockX: number;
@@ -41,6 +43,7 @@ const DEFAULT_OFFSETS: LayoutOffsets = {
     spriteX: 0,
     spriteY: 0,
     hpmpPadding: 0,
+    spriteScaleOffset: 0,
     levelBarX: 0,
     levelBarY: 0,
     hpmpBlockX: 0,
@@ -81,16 +84,18 @@ function loadCanonicalLayout(): CanonicalLayout | null {
             typeof parsed?.hpmpPaddingTopPx !== 'number'
         )
             return null;
+        /* Merge with default so old saved layouts get current HP/MP (and other) positions for any missing field. */
         return {
-            spriteLeftPx: parsed.spriteLeftPx ?? 0,
-            spriteTopPx: parsed.spriteTopPx ?? 0,
-            hpmpPaddingTopPx: parsed.hpmpPaddingTopPx ?? 0,
-            levelBarX: Number(parsed.levelBarX) || 0,
-            levelBarY: Number(parsed.levelBarY) || 0,
-            hpmpBlockX: Number(parsed.hpmpBlockX) || 0,
-            hpmpBlockY: Number(parsed.hpmpBlockY) || 0,
-            rightColumnX: Number(parsed.rightColumnX) || 0,
-            rightColumnY: Number(parsed.rightColumnY) || 0,
+            spriteLeftPx: typeof parsed.spriteLeftPx === 'number' ? parsed.spriteLeftPx : DEFAULT_BASE_LAYOUT.spriteLeftPx,
+            spriteTopPx: typeof parsed.spriteTopPx === 'number' ? parsed.spriteTopPx : DEFAULT_BASE_LAYOUT.spriteTopPx,
+            hpmpPaddingTopPx: typeof parsed.hpmpPaddingTopPx === 'number' ? parsed.hpmpPaddingTopPx : DEFAULT_BASE_LAYOUT.hpmpPaddingTopPx,
+            spriteScale: typeof parsed.spriteScale === 'number' ? parsed.spriteScale : DEFAULT_BASE_LAYOUT.spriteScale,
+            levelBarX: typeof parsed.levelBarX === 'number' ? parsed.levelBarX : DEFAULT_BASE_LAYOUT.levelBarX,
+            levelBarY: typeof parsed.levelBarY === 'number' ? parsed.levelBarY : DEFAULT_BASE_LAYOUT.levelBarY,
+            hpmpBlockX: typeof parsed.hpmpBlockX === 'number' ? parsed.hpmpBlockX : DEFAULT_BASE_LAYOUT.hpmpBlockX,
+            hpmpBlockY: typeof parsed.hpmpBlockY === 'number' ? parsed.hpmpBlockY : DEFAULT_BASE_LAYOUT.hpmpBlockY,
+            rightColumnX: typeof parsed.rightColumnX === 'number' ? parsed.rightColumnX : DEFAULT_BASE_LAYOUT.rightColumnX,
+            rightColumnY: typeof parsed.rightColumnY === 'number' ? parsed.rightColumnY : DEFAULT_BASE_LAYOUT.rightColumnY,
         };
     } catch {
         return null;
@@ -161,36 +166,42 @@ const MOBILE_LAYOUT = {
     rightColumnPaddingLeftPx: 12,
 } as const;
 
-/** Base layout: from saved canonical or MOBILE_LAYOUT. Offsets are added to get effective position. */
+/** Default layout when no canonical is saved. Also used to fill missing fields in old saved layouts. */
+const DEFAULT_BASE_LAYOUT: CanonicalLayout = {
+    spriteLeftPx: -254,
+    spriteTopPx: 90,
+    hpmpPaddingTopPx: -64,
+    spriteScale: 1.45,
+    levelBarX: 209,
+    levelBarY: -15,
+    hpmpBlockX: -42,
+    hpmpBlockY: -1,
+    rightColumnX: 52,
+    rightColumnY: -6,
+};
+
+/** Base layout: from saved canonical or default. Offsets are added to get effective position. */
 function getMobileBaseLayout(canonical: CanonicalLayout | null): CanonicalLayout {
     if (canonical) return canonical;
-    return {
-        spriteLeftPx: -67,
-        spriteTopPx: 9,
-        hpmpPaddingTopPx: 149,
-        levelBarX: 0,
-        levelBarY: 0,
-        hpmpBlockX: -54,
-        hpmpBlockY: -18,
-        rightColumnX: 49,
-        rightColumnY: -16,
-    };
+    return { ...DEFAULT_BASE_LAYOUT };
 }
+
 
 /** Mobile layout: Level bar top-left, sprite below it, HP/MP below sprite; details + stats on right. */
 function MobileLayout({
     layoutEditMode,
     baseLayout,
+    spriteScale,
     offsets,
     setOffsets,
 }: {
     layoutEditMode: boolean;
     baseLayout: CanonicalLayout;
+    spriteScale: number;
     offsets: LayoutOffsets;
     setOffsets: (v: LayoutOffsets | ((prev: LayoutOffsets) => LayoutOffsets)) => void;
 }) {
     const spriteRef = useRef<HTMLDivElement>(null);
-    const hpmpSpacerRef = useRef<HTMLDivElement>(null);
 
     const effectiveSpriteLeft = baseLayout.spriteLeftPx + offsets.spriteX;
     const effectiveSpriteTop = baseLayout.spriteTopPx + offsets.spriteY;
@@ -246,27 +257,6 @@ function MobileLayout({
         [layoutEditMode, offsets, setOffsets]
     );
 
-    const startDragHpmpSpacer = useCallback(
-        (_clientX: number, clientY: number) => {
-            if (!layoutEditMode) return;
-            const startY = clientY;
-            const startOffsets = { ...offsets };
-            const onMove = (e: PointerEvent) => {
-                setOffsets((prev) => ({
-                    ...prev,
-                    hpmpPadding: startOffsets.hpmpPadding + (e.clientY - startY),
-                }));
-            };
-            const onUp = () => {
-                window.removeEventListener('pointermove', onMove);
-                window.removeEventListener('pointerup', onUp);
-            };
-            window.addEventListener('pointermove', onMove);
-            window.addEventListener('pointerup', onUp);
-        },
-        [layoutEditMode, offsets, setOffsets, baseLayout]
-    );
-
     return (
         <div className="mobile-layout-root overflow-visible">
             <div
@@ -289,29 +279,33 @@ function MobileLayout({
                             maxHeight: MOBILE_LAYOUT.spriteMaxHeightPx,
                             width: 'auto',
                             objectFit: 'contain',
-                            transform: `translateX(${MOBILE_LAYOUT.spriteTranslateXPx}px) translateY(${MOBILE_LAYOUT.spriteTranslateYPx}px) scale(${MOBILE_LAYOUT.spriteScale})`,
+                            transform: `translateX(${MOBILE_LAYOUT.spriteTranslateXPx}px) translateY(${MOBILE_LAYOUT.spriteTranslateYPx}px) scale(${spriteScale})`,
                             transformOrigin: 'left center',
                         }}
                     />
-                    {layoutEditMode && (
-                        <div
-                            className="absolute cursor-grab active:cursor-grabbing"
-                            style={{
-                                left: MOBILE_LAYOUT.spriteDragOverlayLeftPx,
-                                top: MOBILE_LAYOUT.spriteDragOverlayTopPx,
-                                width: MOBILE_LAYOUT.spriteDragOverlayWidthPx,
-                                height: MOBILE_LAYOUT.spriteDragOverlayHeightPx,
-                                touchAction: 'none',
-                                pointerEvents: 'auto',
-                            }}
-                            onPointerDown={(e) => {
-                                if (e.button === 0) {
-                                    e.currentTarget.setPointerCapture(e.pointerId);
-                                    startDragSprite(e.clientX, e.clientY);
-                                }
-                            }}
-                        />
-                    )}
+                    {layoutEditMode && (() => {
+                        const baseScale = MOBILE_LAYOUT.spriteScale;
+                        const k = spriteScale / baseScale;
+                        return (
+                            <div
+                                className="absolute cursor-grab active:cursor-grabbing"
+                                style={{
+                                    left: MOBILE_LAYOUT.spriteDragOverlayLeftPx * k,
+                                    top: MOBILE_LAYOUT.spriteDragOverlayTopPx * k,
+                                    width: MOBILE_LAYOUT.spriteDragOverlayWidthPx * k,
+                                    height: MOBILE_LAYOUT.spriteDragOverlayHeightPx * k,
+                                    touchAction: 'none',
+                                    pointerEvents: 'auto',
+                                }}
+                                onPointerDown={(e) => {
+                                    if (e.button === 0) {
+                                        e.currentTarget.setPointerCapture(e.pointerId);
+                                        startDragSprite(e.clientX, e.clientY);
+                                    }
+                                }}
+                            />
+                        );
+                    })()}
                 </div>
             </div>
             <MainLayout>
@@ -348,41 +342,24 @@ function MobileLayout({
                             style={{
                                 width: MOBILE_LAYOUT.leftColumnWidthPx,
                                 minWidth: MOBILE_LAYOUT.leftColumnWidthPx,
-                                paddingTop: effectiveHpmpPadding,
-                                }}
+                            }}
                         >
-                            {layoutEditMode && (
+                            <div className="relative" style={{ marginTop: effectiveHpmpPadding }}>
                                 <div
-                                    ref={hpmpSpacerRef}
-                                    className="absolute left-0 right-0 h-8 flex items-center justify-center border border-dashed border-[var(--color-accent)]/60 rounded bg-black/30 text-xs cursor-ns-resize z-20"
                                     style={{
-                                        top: effectiveHpmpPadding - 16,
-                                        touchAction: 'none',
+                                        transform: `translate(${baseLayout.hpmpBlockX + offsets.hpmpBlockX}px, ${baseLayout.hpmpBlockY + offsets.hpmpBlockY}px)`,
+                                        ...(layoutEditMode && { touchAction: 'none' as const }),
                                     }}
+                                    className={layoutEditMode ? 'cursor-grab active:cursor-grabbing' : ''}
                                     onPointerDown={(e) => {
-                                        if (e.button === 0) {
+                                        if (layoutEditMode && e.button === 0) {
                                             e.currentTarget.setPointerCapture(e.pointerId);
-                                            startDragHpmpSpacer(e.clientX, e.clientY);
+                                            startDragXY('hpmpBlockX', 'hpmpBlockY', e.clientX, e.clientY);
                                         }
                                     }}
                                 >
-                                    drag to move HP/MP
+                                    <HPMPStats />
                                 </div>
-                            )}
-                            <div
-                                style={{
-                                    transform: `translate(${baseLayout.hpmpBlockX + offsets.hpmpBlockX}px, ${baseLayout.hpmpBlockY + offsets.hpmpBlockY}px)`,
-                                    ...(layoutEditMode && { touchAction: 'none' as const }),
-                                }}
-                                className={layoutEditMode ? 'cursor-grab active:cursor-grabbing' : ''}
-                                onPointerDown={(e) => {
-                                    if (layoutEditMode && e.button === 0) {
-                                        e.currentTarget.setPointerCapture(e.pointerId);
-                                        startDragXY('hpmpBlockX', 'hpmpBlockY', e.clientX, e.clientY);
-                                    }
-                                }}
-                            >
-                                <HPMPStats />
                             </div>
                         </div>
                         <div
@@ -419,6 +396,8 @@ function App() {
     });
     const [canonical, setCanonical] = useState<CanonicalLayout | null>(loadCanonicalLayout);
     const [offsets, setOffsetsState] = useState<LayoutOffsets>(loadLayoutOffsets);
+    /** When in edit mode, slider controls this; otherwise we use baseLayout.spriteScale. */
+    const [editSpriteScale, setEditSpriteScale] = useState<number | null>(null);
 
     const baseLayout = getMobileBaseLayout(canonical);
 
@@ -439,16 +418,19 @@ function App() {
         spriteLeftPx: baseLayout.spriteLeftPx + offsets.spriteX,
         spriteTopPx: baseLayout.spriteTopPx + offsets.spriteY,
         hpmpPaddingTopPx: baseLayout.hpmpPaddingTopPx + offsets.hpmpPadding,
+        spriteScale: baseLayout.spriteScale + offsets.spriteScaleOffset,
         levelBar: { x: baseLayout.levelBarX + offsets.levelBarX, y: baseLayout.levelBarY + offsets.levelBarY },
         hpmpBlock: { x: baseLayout.hpmpBlockX + offsets.hpmpBlockX, y: baseLayout.hpmpBlockY + offsets.hpmpBlockY },
         rightColumn: { x: baseLayout.rightColumnX + offsets.rightColumnX, y: baseLayout.rightColumnY + offsets.rightColumnY },
     };
 
     const handleDoneEditing = useCallback(() => {
+        const scaleToSave = editSpriteScale ?? effectiveValues.spriteScale;
         const saved: CanonicalLayout = {
             spriteLeftPx: effectiveValues.spriteLeftPx,
             spriteTopPx: effectiveValues.spriteTopPx,
             hpmpPaddingTopPx: effectiveValues.hpmpPaddingTopPx,
+            spriteScale: scaleToSave,
             levelBarX: effectiveValues.levelBar.x,
             levelBarY: effectiveValues.levelBar.y,
             hpmpBlockX: effectiveValues.hpmpBlock.x,
@@ -461,7 +443,8 @@ function App() {
         setOffsetsState(DEFAULT_OFFSETS);
         saveLayoutOffsets(DEFAULT_OFFSETS);
         setLayoutEditMode(false);
-    }, [effectiveValues.spriteLeftPx, effectiveValues.spriteTopPx, effectiveValues.hpmpPaddingTopPx, effectiveValues.levelBar.x, effectiveValues.levelBar.y, effectiveValues.hpmpBlock.x, effectiveValues.hpmpBlock.y, effectiveValues.rightColumn.x, effectiveValues.rightColumn.y]);
+        setEditSpriteScale(null);
+    }, [editSpriteScale, effectiveValues.spriteLeftPx, effectiveValues.spriteTopPx, effectiveValues.hpmpPaddingTopPx, effectiveValues.spriteScale, effectiveValues.levelBar.x, effectiveValues.levelBar.y, effectiveValues.hpmpBlock.x, effectiveValues.hpmpBlock.y, effectiveValues.rightColumn.x, effectiveValues.rightColumn.y]);
 
     const handleResetAll = useCallback(() => {
         try {
@@ -479,6 +462,7 @@ function App() {
         const block = `    spriteLeftPx: ${Math.round(effectiveValues.spriteLeftPx)},
     spriteTopPx: ${Math.round(effectiveValues.spriteTopPx)},
     hpmpPaddingTopPx: ${Math.round(effectiveValues.hpmpPaddingTopPx)},
+    spriteScale: ${(editSpriteScale ?? effectiveValues.spriteScale).toFixed(2)},
     levelBarX: ${Math.round(effectiveValues.levelBar.x)},
     levelBarY: ${Math.round(effectiveValues.levelBar.y)},
     hpmpBlockX: ${Math.round(effectiveValues.hpmpBlock.x)},
@@ -493,7 +477,7 @@ function App() {
             setCopyFeedback('Copy failed');
             setTimeout(() => setCopyFeedback(null), 2000);
         }
-    }, [effectiveValues.spriteLeftPx, effectiveValues.spriteTopPx, effectiveValues.hpmpPaddingTopPx, effectiveValues.levelBar.x, effectiveValues.levelBar.y, effectiveValues.hpmpBlock.x, effectiveValues.hpmpBlock.y, effectiveValues.rightColumn.x, effectiveValues.rightColumn.y]);
+    }, [editSpriteScale, effectiveValues.spriteLeftPx, effectiveValues.spriteTopPx, effectiveValues.hpmpPaddingTopPx, effectiveValues.spriteScale, effectiveValues.levelBar.x, effectiveValues.levelBar.y, effectiveValues.hpmpBlock.x, effectiveValues.hpmpBlock.y, effectiveValues.rightColumn.x, effectiveValues.rightColumn.y]);
 
     return (
         <div className={isMobile ? 'mobile-viewport-root overflow-visible' : ''}>
@@ -532,7 +516,7 @@ function App() {
                 {isMobile && (
                     <button
                         type="button"
-                        onClick={layoutEditMode ? handleDoneEditing : () => setLayoutEditMode(true)}
+                        onClick={layoutEditMode ? handleDoneEditing : () => { setLayoutEditMode(true); setEditSpriteScale(baseLayout.spriteScale + offsets.spriteScaleOffset); }}
                         className={`ml-2 px-3 py-1.5 rounded text-sm font-medium border ${
                             layoutEditMode ? 'bg-[var(--color-accent)]/20 border-[var(--color-accent)]' : 'border-[var(--color-border)]/50 hover:border-[var(--color-accent)]/70'
                         }`}
@@ -544,7 +528,13 @@ function App() {
             {/* Layout content — add top padding so it’s not under the bar */}
             <div className="app-content-wrap">
                 {isMobile ? (
-                    <MobileLayout layoutEditMode={layoutEditMode} baseLayout={baseLayout} offsets={offsets} setOffsets={setOffsets} />
+                    <MobileLayout
+                        layoutEditMode={layoutEditMode}
+                        baseLayout={baseLayout}
+                        spriteScale={editSpriteScale ?? baseLayout.spriteScale + offsets.spriteScaleOffset}
+                        offsets={offsets}
+                        setOffsets={setOffsets}
+                    />
                 ) : (
                     <DesktopLayout />
                 )}
@@ -555,9 +545,26 @@ function App() {
                     style={{ color: 'var(--color-text)' }}
                 >
                     <div className="font-semibold mb-2">Offsets (drag any element to move)</div>
+                    <div className="mb-2">
+                        <label className="block font-semibold mb-1">Sprite scale</label>
+                        <input
+                            type="range"
+                            min={0.1}
+                            max={2}
+                            step={0.05}
+                            value={editSpriteScale ?? effectiveValues.spriteScale}
+                            onChange={(e) => {
+                                const v = parseFloat(e.target.value);
+                                if (Number.isFinite(v)) setEditSpriteScale(Math.max(0.1, Math.min(2, v)));
+                            }}
+                            className="w-full accent-[var(--color-accent)]"
+                        />
+                        <span className="text-[var(--color-accent)] ml-1">{(editSpriteScale ?? effectiveValues.spriteScale).toFixed(2)}</span>
+                    </div>
                     <pre className="whitespace-pre-wrap break-all">
                         {`sprite: ${Math.round(effectiveValues.spriteLeftPx)}, ${Math.round(effectiveValues.spriteTopPx)}
 hpmpPaddingTopPx: ${Math.round(effectiveValues.hpmpPaddingTopPx)}
+spriteScale: ${(editSpriteScale ?? effectiveValues.spriteScale).toFixed(2)}
 levelBar: ${effectiveValues.levelBar.x}, ${effectiveValues.levelBar.y}
 hpmpBlock: ${effectiveValues.hpmpBlock.x}, ${effectiveValues.hpmpBlock.y}
 rightColumn: ${effectiveValues.rightColumn.x}, ${effectiveValues.rightColumn.y}`}
