@@ -168,22 +168,28 @@ const MOBILE_LAYOUT = {
 
 /** Default layout when no canonical is saved. Also used to fill missing fields in old saved layouts. */
 const DEFAULT_BASE_LAYOUT: CanonicalLayout = {
-    spriteLeftPx: -254,
-    spriteTopPx: 90,
+    spriteLeftPx: -240,
+    spriteTopPx: 128,
     hpmpPaddingTopPx: -64,
-    spriteScale: 1.45,
-    levelBarX: 209,
-    levelBarY: -15,
-    hpmpBlockX: -42,
-    hpmpBlockY: -1,
-    rightColumnX: 52,
-    rightColumnY: -6,
+    spriteScale: 1.35,
+    levelBarX: 176,
+    levelBarY: -16,
+    hpmpBlockX: -48,
+    hpmpBlockY: 0,
+    rightColumnX: 16,
+    rightColumnY: 0,
 };
 
 /** Base layout: from saved canonical or default. Offsets are added to get effective position. */
 function getMobileBaseLayout(canonical: CanonicalLayout | null): CanonicalLayout {
     if (canonical) return canonical;
     return { ...DEFAULT_BASE_LAYOUT };
+}
+
+const EDIT_GRID_SIZE_PX = 16;
+
+function snapToGrid(value: number): number {
+    return Math.round(value / EDIT_GRID_SIZE_PX) * EDIT_GRID_SIZE_PX;
 }
 
 
@@ -211,17 +217,22 @@ function MobileLayout({
         LayoutOffsets,
         'spriteX' | 'spriteY' | 'levelBarX' | 'levelBarY' | 'hpmpBlockX' | 'hpmpBlockY' | 'rightColumnX' | 'rightColumnY'
     >;
+    type BasePositionKey = keyof Pick<CanonicalLayout, 'levelBarX' | 'levelBarY' | 'hpmpBlockX' | 'hpmpBlockY' | 'rightColumnX' | 'rightColumnY'>;
     const startDragXY = useCallback(
         (keyX: DragKey, keyY: DragKey, clientX: number, clientY: number) => {
             if (!layoutEditMode) return;
             const startX = clientX;
             const startY = clientY;
             const startOffsets = { ...offsets };
+            const baseX = baseLayout[keyX as BasePositionKey];
+            const baseY = baseLayout[keyY as BasePositionKey];
             const onMove = (e: PointerEvent) => {
+                const rawX = baseX + startOffsets[keyX] + (e.clientX - startX);
+                const rawY = baseY + startOffsets[keyY] + (e.clientY - startY);
                 setOffsets((prev) => ({
                     ...prev,
-                    [keyX]: startOffsets[keyX] + (e.clientX - startX),
-                    [keyY]: startOffsets[keyY] + (e.clientY - startY),
+                    [keyX]: snapToGrid(rawX) - baseX,
+                    [keyY]: snapToGrid(rawY) - baseY,
                 }));
             };
             const onUp = () => {
@@ -231,7 +242,7 @@ function MobileLayout({
             window.addEventListener('pointermove', onMove);
             window.addEventListener('pointerup', onUp);
         },
-        [layoutEditMode, offsets, setOffsets]
+        [layoutEditMode, offsets, setOffsets, baseLayout]
     );
 
     const startDragSprite = useCallback(
@@ -241,10 +252,12 @@ function MobileLayout({
             const startY = clientY;
             const startOffsets = { ...offsets };
             const onMove = (e: PointerEvent) => {
+                const rawLeft = baseLayout.spriteLeftPx + startOffsets.spriteX + (e.clientX - startX);
+                const rawTop = baseLayout.spriteTopPx + startOffsets.spriteY + (e.clientY - startY);
                 setOffsets((prev) => ({
                     ...prev,
-                    spriteX: startOffsets.spriteX + (e.clientX - startX),
-                    spriteY: startOffsets.spriteY + (e.clientY - startY),
+                    spriteX: snapToGrid(rawLeft) - baseLayout.spriteLeftPx,
+                    spriteY: snapToGrid(rawTop) - baseLayout.spriteTopPx,
                 }));
             };
             const onUp = () => {
@@ -254,11 +267,25 @@ function MobileLayout({
             window.addEventListener('pointermove', onMove);
             window.addEventListener('pointerup', onUp);
         },
-        [layoutEditMode, offsets, setOffsets]
+        [layoutEditMode, offsets, setOffsets, baseLayout]
     );
 
     return (
         <div className="mobile-layout-root overflow-visible">
+            {layoutEditMode && (
+                <div
+                    className="fixed inset-0 z-[5] pointer-events-none"
+                    style={{
+                        backgroundImage: `
+                            linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+                            linear-gradient(to bottom, var(--color-border) 1px, transparent 1px)
+                        `,
+                        backgroundSize: `${EDIT_GRID_SIZE_PX}px ${EDIT_GRID_SIZE_PX}px`,
+                        opacity: 0.25,
+                    }}
+                    aria-hidden
+                />
+            )}
             <div
                 className={`fixed left-0 top-0 h-screen w-screen overflow-hidden ${layoutEditMode ? 'z-20 pointer-events-none' : 'z-0 pointer-events-none'}`}
             >
@@ -318,12 +345,12 @@ function MobileLayout({
                 >
                     <div className="flex flex-row items-start w-full">
                         <div
-                            className={`flex-shrink-0 ${layoutEditMode ? 'cursor-grab active:cursor-grabbing' : ''}`.trim()}
+                            className={`relative flex-shrink-0 ${layoutEditMode ? 'cursor-grab active:cursor-grabbing' : ''}`.trim()}
                             style={{
                                 width: 'max-content',
                                 minWidth: MOBILE_LAYOUT.leftColumnWidthPx,
                                 transform: `translate(${baseLayout.levelBarX + offsets.levelBarX}px, ${baseLayout.levelBarY + offsets.levelBarY}px)`,
-                                ...(layoutEditMode && { touchAction: 'none' as const }),
+                                ...(layoutEditMode && { touchAction: 'none' as const, zIndex: 30 }),
                             }}
                             onPointerDown={(e) => {
                                 if (layoutEditMode && e.button === 0) {

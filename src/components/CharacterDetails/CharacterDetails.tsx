@@ -90,7 +90,9 @@ function getRandomGain(): number {
     return Math.floor(r * 5043) + 1;
 }
 
-export function ExperienceBar() {
+type ExperienceBarProps = { hideLevelPercent?: boolean };
+
+export function ExperienceBar({ hideLevelPercent }: ExperienceBarProps = {}) {
     const [progress, setProgress] = useState(getYearProgress);
     const [gain, setGain] = useState<{ value: number; key: number } | null>(null);
 
@@ -133,7 +135,9 @@ export function ExperienceBar() {
                         )}
                     </AnimatePresence>
                 </span>
-                <span className="tabular-nums text-[var(--color-accent)] shrink-0" style={{ paddingRight: '1.5rem' }}>{percent.toFixed(1)}% to next level</span>
+                {!hideLevelPercent && (
+                    <span className="tabular-nums text-[var(--color-accent)] shrink-0" style={{ paddingRight: '1.5rem' }}>{percent.toFixed(1)}% to next level</span>
+                )}
             </div>
             <div className="w-full max-w-[260px] relative">
                 <div
@@ -262,7 +266,7 @@ export default function CharacterDetails({ variant = 'desktop' }: CharacterDetai
             className="character-details font-panel-body"
         >
             <div className="p-5 lg:p-6 flex flex-col" style={{ gap: '0.625rem' }}>
-                <ExperienceBar />
+                <ExperienceBar hideLevelPercent={isMobile} />
                 <div className="flex flex-row flex-wrap gap-8 items-start" style={{ marginTop: '0.5rem' }}>
                     <section className="min-w-0 flex-1">
                         <SectionTitle>Specialization</SectionTitle>
