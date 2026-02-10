@@ -38,9 +38,11 @@ export default function CharacterStats() {
                     {STATS.map(({ name, value, tooltip }) => (
                         <li key={name} className="flex flex-col gap-1">
                             <div className="flex justify-between items-baseline text-sm gap-4">
-                                <Tooltip content={tooltip}>
-                                    <span className="text-[var(--color-text)] font-medium">{name}</span>
-                                </Tooltip>
+                                <span className="min-w-0 flex-shrink">
+                                    <Tooltip content={tooltip}>
+                                        <span className="text-[var(--color-text)] font-medium">{name}</span>
+                                    </Tooltip>
+                                </span>
                                 <span className="text-[var(--color-accent)] font-semibold tabular-nums shrink-0" style={{ paddingRight: '1.5rem' }}>
                                     {value}
                                 </span>

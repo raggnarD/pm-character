@@ -60,7 +60,7 @@ export default function Tooltip({ content, children, className = '' }: TooltipPr
 
     return (
         <span
-            className={`relative inline-flex items-center gap-1 cursor-help border-b border-dotted border-[var(--color-accent)] ${className}`}
+            className={`relative inline cursor-help underline decoration-dotted decoration-2 underline-offset-2 [text-decoration-color:var(--color-accent)] ${className}`}
             onMouseEnter={handleMouseEnter}
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setVisible(false)}

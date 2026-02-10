@@ -217,7 +217,9 @@ export default function CharacterDetails({ variant = 'desktop' }: CharacterDetai
                         <li key={perk.name} className="flex flex-col gap-0.5">
                             <span className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                                 <Glyph>{perk.glyph}</Glyph>
-                                <Tooltip content={perk.description}>{perk.name}</Tooltip>
+                                <span className="min-w-0 shrink">
+                                    <Tooltip content={perk.description}>{perk.name}</Tooltip>
+                                </span>
                             </span>
                         </li>
                     ))}
@@ -230,9 +232,11 @@ export default function CharacterDetails({ variant = 'desktop' }: CharacterDetai
                     {SIGNATURE_MOVES.map((move) => (
                         <p key={move.name} className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                             <Glyph>{move.glyph}</Glyph>
-                            <Tooltip content={move.description}>
-                                {move.name}{move.suffix ? ` ${move.suffix}` : ''}
-                            </Tooltip>
+                            <span className="min-w-0 shrink">
+                                <Tooltip content={move.description}>
+                                    {move.name}{move.suffix ? ` ${move.suffix}` : ''}
+                                </Tooltip>
+                            </span>
                         </p>
                     ))}
                 </div>
@@ -243,7 +247,9 @@ export default function CharacterDetails({ variant = 'desktop' }: CharacterDetai
                 <div className={`flex flex-col pl-6 md:pl-8 ml-2 pr-2`} style={{ gap: '1px' }}>
                     <p className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                         <Glyph>{BONUS_TRAIT.glyph}</Glyph>
-                        <Tooltip content={BONUS_TRAIT.description}>{BONUS_TRAIT.name}</Tooltip>
+                        <span className="min-w-0 shrink">
+                            <Tooltip content={BONUS_TRAIT.description}>{BONUS_TRAIT.name}</Tooltip>
+                        </span>
                     </p>
                 </div>
             </section>
@@ -282,9 +288,11 @@ export default function CharacterDetails({ variant = 'desktop' }: CharacterDetai
                             {SIGNATURE_MOVES.map((move) => (
                                 <p key={move.name} className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                                     <Glyph>{move.glyph}</Glyph>
-                                    <Tooltip content={move.description}>
-                                        {move.name}{move.suffix ? ` ${move.suffix}` : ''}
-                                    </Tooltip>
+                                    <span className="min-w-0 shrink">
+                                        <Tooltip content={move.description}>
+                                            {move.name}{move.suffix ? ` ${move.suffix}` : ''}
+                                        </Tooltip>
+                                    </span>
                                 </p>
                             ))}
                         </div>
@@ -298,7 +306,9 @@ export default function CharacterDetails({ variant = 'desktop' }: CharacterDetai
                                 <li key={perk.name} className="flex flex-col gap-0.5">
                                     <span className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                                         <Glyph>{perk.glyph}</Glyph>
-                                        <Tooltip content={perk.description}>{perk.name}</Tooltip>
+                                        <span className="min-w-0 shrink">
+                                            <Tooltip content={perk.description}>{perk.name}</Tooltip>
+                                        </span>
                                     </span>
                                 </li>
                             ))}
@@ -309,7 +319,9 @@ export default function CharacterDetails({ variant = 'desktop' }: CharacterDetai
                         <div className="flex flex-col pl-8 ml-2 pr-2" style={{ gap: '1px' }}>
                             <p className="font-panel-body text-sm font-semibold text-[var(--color-textHighlight, var(--color-accent))] flex items-center">
                                 <Glyph>{BONUS_TRAIT.glyph}</Glyph>
-                                <Tooltip content={BONUS_TRAIT.description}>{BONUS_TRAIT.name}</Tooltip>
+                                <span className="min-w-0 shrink">
+                                    <Tooltip content={BONUS_TRAIT.description}>{BONUS_TRAIT.name}</Tooltip>
+                                </span>
                             </p>
                         </div>
                     </section>
