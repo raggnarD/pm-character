@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import MainLayout from './components/Layout/MainLayout';
 import LoopingGif from './components/LoopingGif';
-import HPMPStats from './components/HPMPStats';
+import HPMPStats, { type ViewSwitcherProps } from './components/HPMPStats';
 import CharacterDetails, { ExperienceBar } from './components/CharacterDetails/CharacterDetails';
 import CharacterStats from './components/CharacterDetails/CharacterStats';
 import { useTheme } from './hooks/useTheme';
@@ -111,7 +111,7 @@ function saveCanonicalLayout(layout: CanonicalLayout) {
 }
 
 /** Desktop-only layout: fixed sprite (original position), then content row left/right, all transparent. */
-function DesktopLayout() {
+function DesktopLayout({ viewSwitcher }: { viewSwitcher?: ViewSwitcherProps }) {
     return (
         <div className="desktop-layout-root">
             <div className="fixed left-0 top-0 h-screen w-screen overflow-hidden z-0 pointer-events-none desktop-sprite-bg">
@@ -134,7 +134,7 @@ function DesktopLayout() {
                             style={{ width: 'min(50vw, 50%)', minWidth: 'min(50vw, 50%)' }}
                             aria-hidden
                         >
-                            <HPMPStats />
+                            <HPMPStats viewSwitcher={viewSwitcher} />
                         </div>
                         <div className="flex-1 min-w-0 pl-6 lg:pl-8 max-w-xl flex flex-col">
                             <CharacterDetails />
@@ -200,12 +200,14 @@ function MobileLayout({
     spriteScale,
     offsets,
     setOffsets,
+    viewSwitcher,
 }: {
     layoutEditMode: boolean;
     baseLayout: CanonicalLayout;
     spriteScale: number;
     offsets: LayoutOffsets;
     setOffsets: (v: LayoutOffsets | ((prev: LayoutOffsets) => LayoutOffsets)) => void;
+    viewSwitcher?: ViewSwitcherProps;
 }) {
     const spriteRef = useRef<HTMLDivElement>(null);
 
@@ -385,7 +387,7 @@ function MobileLayout({
                                         }
                                     }}
                                 >
-                                    <HPMPStats />
+                                    <HPMPStats viewSwitcher={viewSwitcher} />
                                 </div>
                             </div>
                         </div>
@@ -416,6 +418,8 @@ function MobileLayout({
 function App() {
     useTheme();
     const { isMobile, viewMode, setViewMode } = useIsMobile();
+    const [viewMenuOpen, setViewMenuOpen] = useState(false);
+    const viewSwitcher: ViewSwitcherProps = { viewMode, setViewMode, isMobile, viewMenuOpen, setViewMenuOpen };
 
     const [layoutEditMode, setLayoutEditMode] = useState(() => {
         if (typeof window === 'undefined') return false;
@@ -508,50 +512,23 @@ function App() {
 
     return (
         <div className={isMobile ? 'mobile-viewport-root overflow-visible' : ''}>
-            {/* Top bar: switch Desktop / Mobile view */}
-            <div
-                className="app-top-bar fixed top-0 left-0 right-0 z-50 flex justify-center gap-2 px-2 bg-black/70 border-b border-[var(--color-border)]"
-                style={{ color: 'var(--color-text)' }}
-            >
-                <button
-                    type="button"
-                    onClick={() => setViewMode('desktop')}
-                    className={`px-3 py-1.5 rounded text-sm font-medium border ${
-                        !isMobile ? 'bg-[var(--color-accent)]/20 border-[var(--color-accent)]' : 'border-[var(--color-border)]/50 hover:border-[var(--color-accent)]/70'
-                    }`}
+            {/* Top bar: Edit layout only when on mobile (Desktop/Mobile switch is under HP heart) */}
+            {isMobile && (
+                <div
+                    className="app-top-bar fixed top-0 left-0 right-0 z-50 flex justify-center gap-2 px-2 bg-black/70 border-b border-[var(--color-border)]"
+                    style={{ color: 'var(--color-text)' }}
                 >
-                    Desktop
-                </button>
-                <button
-                    type="button"
-                    onClick={() => setViewMode('mobile')}
-                    className={`px-3 py-1.5 rounded text-sm font-medium border ${
-                        isMobile ? 'bg-[var(--color-accent)]/20 border-[var(--color-accent)]' : 'border-[var(--color-border)]/50 hover:border-[var(--color-accent)]/70'
-                    }`}
-                >
-                    Mobile
-                </button>
-                {viewMode !== 'auto' && (
-                    <button
-                        type="button"
-                        onClick={() => setViewMode('auto')}
-                        className="px-3 py-1.5 rounded text-sm font-medium border border-[var(--color-border)]/50 hover:border-[var(--color-accent)]/70"
-                    >
-                        Auto
-                    </button>
-                )}
-                {isMobile && (
                     <button
                         type="button"
                         onClick={layoutEditMode ? handleDoneEditing : () => { setLayoutEditMode(true); setEditSpriteScale(baseLayout.spriteScale + offsets.spriteScaleOffset); }}
-                        className={`ml-2 px-3 py-1.5 rounded text-sm font-medium border ${
+                        className={`px-3 py-1.5 rounded text-sm font-medium border ${
                             layoutEditMode ? 'bg-[var(--color-accent)]/20 border-[var(--color-accent)]' : 'border-[var(--color-border)]/50 hover:border-[var(--color-accent)]/70'
                         }`}
                     >
                         {layoutEditMode ? 'Done editing' : 'Edit layout'}
                     </button>
-                )}
-            </div>
+                </div>
+            )}
             {/* Layout content — add top padding so it’s not under the bar */}
             <div className="app-content-wrap">
                 {isMobile ? (
@@ -561,9 +538,10 @@ function App() {
                         spriteScale={editSpriteScale ?? baseLayout.spriteScale + offsets.spriteScaleOffset}
                         offsets={offsets}
                         setOffsets={setOffsets}
+                        viewSwitcher={viewSwitcher}
                     />
                 ) : (
-                    <DesktopLayout />
+                    <DesktopLayout viewSwitcher={viewSwitcher} />
                 )}
             </div>
             {isMobile && layoutEditMode && (
