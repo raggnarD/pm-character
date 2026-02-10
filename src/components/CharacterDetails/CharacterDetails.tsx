@@ -113,7 +113,7 @@ export function ExperienceBar() {
     const percent = Math.min(100, progress * 100);
 
     return (
-        <div className="mb-6 relative">
+        <div className="mb-6 relative" style={{ backgroundColor: 'transparent' }}>
             <div className="flex justify-between items-baseline text-xs font-panel-body text-[var(--color-text)] opacity-90 mb-1 gap-2">
                 <span>Level {age}</span>
                 <span className="tabular-nums text-[var(--color-accent)] shrink-0" style={{ paddingRight: '1.5rem' }}>{percent.toFixed(1)}% to next level</span>
@@ -121,7 +121,7 @@ export function ExperienceBar() {
             <div className="w-full max-w-[260px] relative">
                 <div
                     className="relative h-5 w-full rounded-sm overflow-hidden border border-[var(--color-border)]"
-                    style={{ backgroundColor: 'rgba(60, 60, 60, 0.95)' }}
+                    style={{ backgroundColor: 'transparent' }}
                     role="progressbar"
                     aria-valuenow={percent}
                     aria-valuemin={0}
@@ -129,7 +129,7 @@ export function ExperienceBar() {
                     aria-label="Experience through the year"
                 >
                     <motion.div
-                        className="absolute left-0 top-0 bottom-0 rounded-l-sm"
+                        className="experience-bar-fill absolute left-0 top-0 bottom-0 rounded-l-sm"
                         style={{
                             width: `${percent}%`,
                             backgroundColor: 'var(--color-accent)',

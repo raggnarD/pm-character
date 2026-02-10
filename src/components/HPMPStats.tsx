@@ -29,7 +29,7 @@ export default function HPMPStats() {
     return (
         <div
             className="mb-4 flex flex-col gap-2 font-panel-body text-sm text-[var(--color-text)] p-4 rounded"
-            style={{ paddingRight: '4rem', paddingLeft: '3rem' }}
+            style={{ paddingRight: '4rem', paddingLeft: '3rem', backgroundColor: 'transparent' }}
         >
             <div className="flex items-center">
                 <span className="inline-block flex-shrink-0 text-[var(--color-accent)]" style={{ fontSize: GLYPH_SIZE, marginRight: '12px' }} aria-hidden>

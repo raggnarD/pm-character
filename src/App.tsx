@@ -1,7 +1,7 @@
 import MainLayout from './components/Layout/MainLayout';
 import LoopingGif from './components/LoopingGif';
 import HPMPStats from './components/HPMPStats';
-import CharacterDetails, { ExperienceBar } from './components/CharacterDetails/CharacterDetails';
+import CharacterDetails from './components/CharacterDetails/CharacterDetails';
 import CharacterStats from './components/CharacterDetails/CharacterStats';
 import { useTheme } from './hooks/useTheme';
 import { useIsMobile } from './hooks/useIsMobile';
@@ -11,8 +11,8 @@ import './App.css';
 /** Desktop-only layout: fixed sprite (original position), then content row left/right, all transparent. */
 function DesktopLayout() {
     return (
-        <>
-            <div className="fixed left-0 top-0 h-screen w-screen overflow-hidden z-0 pointer-events-none">
+        <div className="desktop-layout-root">
+            <div className="fixed left-0 top-0 h-screen w-screen overflow-hidden z-0 pointer-events-none desktop-sprite-bg">
                 <LoopingGif
                     src="sprites/ff7-rebirth/modern-sprite-loop.gif?v=2"
                     alt="Character Sprite"
@@ -41,69 +41,45 @@ function DesktopLayout() {
                     </div>
                 </div>
             </MainLayout>
-        </>
+        </div>
     );
 }
 
-/** Mobile layout spacing: change these to adjust spacing; all values in px. */
-const MOBILE_LAYOUT = {
-    pagePadding: 16,
-    gapBetweenSections: 24,
-    gapBetweenHpMpAndSprite: -48, // space between HP/MP block and sprite row (negative = overlap/reduce gap)
-    spriteTranslateX: -300,
-    spriteScale: 2,
-} as const;
-
-/** Mobile-only layout: HP/MP above, then sprite + level, then sections, then stats. */
+/** Mobile layout: same structure as desktop (sprite left, content right) but responsive (smaller sprite, tighter padding). */
 function MobileLayout() {
     return (
-        <MainLayout>
-            <div
-                className="relative z-10 flex flex-col overflow-visible"
-                style={{
-                    backgroundColor: 'transparent',
-                    padding: MOBILE_LAYOUT.pagePadding,
-                    gap: MOBILE_LAYOUT.gapBetweenSections,
-                }}
-            >
-                {/* Row 1: HP/MP above sprite */}
-                <div aria-hidden>
-                    <HPMPStats />
-                </div>
-                {/* Row 2: sprite upper left, level to the right */}
-                <div
-                    className="flex flex-row items-start gap-4 w-full overflow-visible"
-                    style={{ marginTop: -MOBILE_LAYOUT.gapBetweenSections + MOBILE_LAYOUT.gapBetweenHpMpAndSprite }}
-                >
-                    <div
-                        className="flex-shrink-0 overflow-hidden"
-                        style={{
-                            width: 800,
-                            height: 1280,
-                            maxWidth: '90vw',
-                            maxHeight: '60vh',
-                            transform: `translateX(${MOBILE_LAYOUT.spriteTranslateX}px)`,
-                        }}
-                        aria-hidden
-                    >
-                        <div style={{ transform: `scale(${MOBILE_LAYOUT.spriteScale})`, transformOrigin: 'top left', width: 400, height: 640 }}>
-                            <LoopingGif
-                                src="sprites/ff7-rebirth/modern-sprite-loop.gif?v=2"
-                                alt="Character Sprite"
-                                className="block h-full w-full object-contain object-left-top"
-                            />
+        <div className="mobile-layout-root">
+            {/* Sprite: left side on mobile, smaller so it doesn't dominate */}
+            <div className="fixed left-0 top-0 h-screen w-screen overflow-hidden z-0 pointer-events-none">
+                <LoopingGif
+                    src="sprites/ff7-rebirth/modern-sprite-loop.gif?v=2"
+                    alt="Character Sprite"
+                    className="mobile-sprite h-full w-auto absolute left-4 top-0 max-h-[55vh]"
+                    style={{
+                        objectFit: 'contain',
+                        transform: 'translateX(-17.5%) translateY(30px) scale(0.6)',
+                        transformOrigin: 'left center',
+                    }}
+                />
+            </div>
+            <MainLayout>
+                <div className="relative z-10 p-4" style={{ backgroundColor: 'transparent' }}>
+                    <div className="flex flex-row items-start w-full">
+                        <div
+                            className="flex-shrink-0"
+                            style={{ width: 'min(45vw, 45%)', minWidth: 'min(45vw, 45%)' }}
+                            aria-hidden
+                        >
+                            <HPMPStats />
+                        </div>
+                        <div className="flex-1 min-w-0 pl-4 max-w-xl flex flex-col">
+                            <CharacterDetails />
+                            <CharacterStats />
                         </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                        <ExperienceBar />
-                    </div>
                 </div>
-                {/* Sections: Specialization, Passive Perks, Signature Moves, Bonus Trait */}
-                <CharacterDetails variant="mobile" />
-                {/* Stats */}
-                <CharacterStats />
-            </div>
-        </MainLayout>
+            </MainLayout>
+        </div>
     );
 }
 

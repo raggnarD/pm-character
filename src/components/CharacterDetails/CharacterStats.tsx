@@ -28,7 +28,7 @@ export default function CharacterStats() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.25 }}
             className="font-panel-body"
-            style={{ marginTop: '2rem' }}
+            style={{ marginTop: '2rem', backgroundColor: 'transparent' }}
         >
             <div className="p-5 lg:p-6 flex flex-col gap-4">
                 <h3 className="font-panel-title text-base lg:text-lg font-semibold text-[var(--color-accent)] pt-2 pb-1 mb-4 tracking-wide">
@@ -46,7 +46,8 @@ export default function CharacterStats() {
                                 </span>
                             </div>
                             <div
-                                className="h-2 rounded-full bg-black/30 border border-[var(--color-border)] overflow-hidden"
+                                className="h-2 rounded-full border border-[var(--color-border)] overflow-hidden"
+                            style={{ backgroundColor: 'transparent' }}
                                 role="progressbar"
                                 aria-valuenow={value}
                                 aria-valuemin={0}
