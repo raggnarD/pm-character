@@ -115,7 +115,24 @@ export function ExperienceBar() {
     return (
         <div className="mb-6 relative" style={{ backgroundColor: 'transparent' }}>
             <div className="flex justify-between items-baseline text-xs font-panel-body text-[var(--color-text)] opacity-90 mb-1 gap-2">
-                <span>Level {age}</span>
+                <span className="flex items-baseline gap-1.5">
+                    <span>Level {age}</span>
+                    <AnimatePresence mode="wait">
+                        {gain && (
+                            <motion.span
+                                key={gain.key}
+                                className="text-sm font-bold text-[var(--color-accent)] font-panel-body"
+                                style={{ paddingLeft: '0.5rem' }}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                transition={{ duration: 0.4 }}
+                            >
+                                +{gain.value} exp
+                            </motion.span>
+                        )}
+                    </AnimatePresence>
+                </span>
                 <span className="tabular-nums text-[var(--color-accent)] shrink-0" style={{ paddingRight: '1.5rem' }}>{percent.toFixed(1)}% to next level</span>
             </div>
             <div className="w-full max-w-[260px] relative">
@@ -139,20 +156,6 @@ export function ExperienceBar() {
                         transition={{ duration: 0.5, ease: 'easeOut' }}
                     />
                 </div>
-                <AnimatePresence mode="wait">
-                    {gain && (
-                        <motion.div
-                            key={gain.key}
-                            className="absolute left-full top-1/2 -translate-y-1/2 ml-1 text-sm font-bold text-[var(--color-accent)] whitespace-nowrap"
-                            initial={{ opacity: 0, y: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, y: -8, scale: 1 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.4 }}
-                        >
-                            +{gain.value} exp
-                        </motion.div>
-                    )}
-                </AnimatePresence>
             </div>
             <div className="text-xs font-panel-body text-[var(--color-text)] opacity-75 mt-0.5">
                 Current Location: Trials of Fire

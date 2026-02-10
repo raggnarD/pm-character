@@ -86,3 +86,8 @@ body {
   background-color: transparent;
   background: none;
 }
+
+/* Mobile: remove left padding on HP/MP so it's left-aligned */
+.mobile-layout-root .mobile-hpmp > div {
+  padding-left: 0 !important;
+}
