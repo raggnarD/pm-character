@@ -30,7 +30,7 @@ export default function CharacterStats() {
             className="font-panel-body"
             style={{ marginTop: '2rem', backgroundColor: 'transparent' }}
         >
-            <div className="p-5 lg:p-6 flex flex-col gap-4">
+            <div className="p-5 pr-6 lg:p-6 lg:pr-8 flex flex-col gap-4">
                 <h3 className="font-panel-title text-base lg:text-lg font-semibold text-[var(--color-accent)] pt-2 pb-1 mb-4 tracking-wide">
                     Stats
                 </h3>
