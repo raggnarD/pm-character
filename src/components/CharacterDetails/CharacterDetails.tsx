@@ -114,7 +114,7 @@ export function ExperienceBar() {
 
     return (
         <div className="mb-6 relative" style={{ backgroundColor: 'transparent' }}>
-            <div className="flex justify-between items-baseline text-xs font-panel-body text-[var(--color-text)] opacity-90 mb-1 gap-2">
+            <div className="flex justify-between items-baseline text-xs font-panel-body text-[var(--color-text)] opacity-90 mb-1 gap-2 whitespace-nowrap">
                 <span className="flex items-baseline gap-1.5">
                     <span>Level {age}</span>
                     <AnimatePresence mode="wait">

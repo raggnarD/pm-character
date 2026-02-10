@@ -22,6 +22,16 @@ body {
   background-color: #3a3a3a;
   color: #ffd700;
   line-height: 1.5;
+  /* Safe area for iPhone notch/Dynamic Island and home indicator */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Mobile: use dynamic viewport height so layout fits on iPhone 16/17 */
+@supports (min-height: 100dvh) {
+  .mobile-viewport-root {
+    min-height: 100dvh;
+  }
 }
 
 /* Font family classes for theme switching */
@@ -80,14 +90,32 @@ body {
   transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Mobile layout: transparent so sprite shows through; sprite stays behind content (z-0) */
+/* Mobile layout: transparent so sprite shows through; allow content to be positioned off-screen */
 .mobile-layout-root main,
 .mobile-layout-root main > * {
   background-color: transparent;
   background: none;
+  overflow: visible;
 }
 
 /* Mobile: remove left padding on HP/MP so it's left-aligned */
 .mobile-layout-root .mobile-hpmp > div {
   padding-left: 0 !important;
+}
+
+/* Top bar safe area (Dynamic Island / notch) */
+.app-top-bar {
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+  padding-bottom: 0.5rem;
+}
+
+/* Main content clear of top bar; safe area bottom for scroll */
+.app-content-wrap {
+  padding-top: 3rem;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Edit layout overlay above home indicator */
+.app-edit-overlay {
+  bottom: max(1rem, env(safe-area-inset-bottom));
 }
