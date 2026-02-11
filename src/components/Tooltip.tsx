@@ -1,6 +1,8 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const TAP_CLOSE_IGNORE_MS = 400; // ignore the synthetic click that follows touch so tooltip stays open
 
 export interface TooltipProps {
     content: string;
@@ -59,6 +61,7 @@ const tooltipPopup = (
 export default function Tooltip({ content, children, className = '' }: TooltipProps) {
     const [visible, setVisible] = useState(false);
     const [position, setPosition] = useState({ left: 0, top: 0 });
+    const openedByTouchAt = useRef(0);
 
     const updatePosition = useCallback((clientX: number, clientY: number) => {
         setPosition(clampToViewport(clientX + CURSOR_OFFSET, clientY + CURSOR_OFFSET));
@@ -79,6 +82,10 @@ export default function Tooltip({ content, children, className = '' }: TooltipPr
             const canHover = window.matchMedia('(hover: hover)').matches;
             if (canHover) return; // desktop: rely on hover
             e.preventDefault();
+            // On touch devices, a tap fires touchstart then a synthetic click. Ignore that click so the tooltip stays open.
+            if (visible && Date.now() - openedByTouchAt.current < TAP_CLOSE_IGNORE_MS) {
+                return;
+            }
             if (visible) {
                 setVisible(false);
             } else {
@@ -97,6 +104,7 @@ export default function Tooltip({ content, children, className = '' }: TooltipPr
             const t = e.changedTouches?.[0] ?? e.touches?.[0];
             if (t) {
                 updatePosition(t.clientX, t.clientY);
+                openedByTouchAt.current = Date.now();
                 setVisible(true);
             }
         },
