@@ -14,6 +14,9 @@ export interface ViewSwitcherProps {
     isMobile: boolean;
     viewMenuOpen: boolean;
     setViewMenuOpen: (open: boolean) => void;
+    /** When on mobile: show Edit layout / Done editing in the heart menu */
+    layoutEditMode?: boolean;
+    onLayoutEditToggle?: () => void;
 }
 
 /** Fluctuate value by ~5–10% of base (up or down), clamped to [0, max]. */
@@ -107,6 +110,17 @@ export default function HPMPStats(props?: { viewSwitcher?: ViewSwitcherProps }) 
                                 style={{ color: 'inherit' }}
                             >
                                 Auto
+                            </button>
+                        )}
+                        {viewSwitcher.layoutEditMode !== undefined && viewSwitcher.onLayoutEditToggle && (
+                            <button
+                                type="button"
+                                role="menuitem"
+                                onClick={() => { viewSwitcher.onLayoutEditToggle?.(); viewSwitcher.setViewMenuOpen(false); }}
+                                className={`px-3 py-1.5 text-left text-sm font-medium border-0 rounded-none w-full border-t border-white/20 mt-1 pt-1 ${viewSwitcher.layoutEditMode ? 'bg-[var(--color-accent)]/30' : 'hover:bg-white/15'}`}
+                                style={{ color: 'inherit' }}
+                            >
+                                {viewSwitcher.layoutEditMode ? 'Done editing' : 'Edit layout'}
                             </button>
                         )}
                     </div>

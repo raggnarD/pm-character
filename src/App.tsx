@@ -419,7 +419,6 @@ function App() {
     useTheme();
     const { isMobile, viewMode, setViewMode } = useIsMobile();
     const [viewMenuOpen, setViewMenuOpen] = useState(false);
-    const viewSwitcher: ViewSwitcherProps = { viewMode, setViewMode, isMobile, viewMenuOpen, setViewMenuOpen };
 
     const [layoutEditMode, setLayoutEditMode] = useState(() => {
         if (typeof window === 'undefined') return false;
@@ -510,25 +509,26 @@ function App() {
         }
     }, [editSpriteScale, effectiveValues.spriteLeftPx, effectiveValues.spriteTopPx, effectiveValues.hpmpPaddingTopPx, effectiveValues.spriteScale, effectiveValues.levelBar.x, effectiveValues.levelBar.y, effectiveValues.hpmpBlock.x, effectiveValues.hpmpBlock.y, effectiveValues.rightColumn.x, effectiveValues.rightColumn.y]);
 
+    const viewSwitcher: ViewSwitcherProps = {
+        viewMode,
+        setViewMode,
+        isMobile,
+        viewMenuOpen,
+        setViewMenuOpen,
+        ...(isMobile && {
+            layoutEditMode,
+            onLayoutEditToggle: layoutEditMode
+                ? handleDoneEditing
+                : () => {
+                    setLayoutEditMode(true);
+                    setEditSpriteScale(baseLayout.spriteScale + offsets.spriteScaleOffset);
+                },
+        }),
+    };
+
     return (
         <div className={isMobile ? 'mobile-viewport-root overflow-visible' : ''}>
             {/* Top bar: Edit layout only when on mobile (Desktop/Mobile switch is under HP heart) */}
-            {isMobile && (
-                <div
-                    className="app-top-bar fixed top-0 left-0 right-0 z-50 flex justify-center gap-2 px-2 bg-black/70 border-b border-[var(--color-border)]"
-                    style={{ color: 'var(--color-text)' }}
-                >
-                    <button
-                        type="button"
-                        onClick={layoutEditMode ? handleDoneEditing : () => { setLayoutEditMode(true); setEditSpriteScale(baseLayout.spriteScale + offsets.spriteScaleOffset); }}
-                        className={`px-3 py-1.5 rounded text-sm font-medium border ${
-                            layoutEditMode ? 'bg-[var(--color-accent)]/20 border-[var(--color-accent)]' : 'border-[var(--color-border)]/50 hover:border-[var(--color-accent)]/70'
-                        }`}
-                    >
-                        {layoutEditMode ? 'Done editing' : 'Edit layout'}
-                    </button>
-                </div>
-            )}
             {/* Layout content — add top padding so it’s not under the bar */}
             <div className="app-content-wrap">
                 {isMobile ? (
